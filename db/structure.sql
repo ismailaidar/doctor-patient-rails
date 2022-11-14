@@ -35,7 +35,7 @@ CREATE TABLE public.appointments (
     id bigint NOT NULL,
     patient_id bigint NOT NULL,
     doctor_id bigint NOT NULL,
-    timerange daterange NOT NULL,
+    timerange tstzrange NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     CONSTRAINT npi_check CHECK (((doctor_id)::integer <> (patient_id)::integer))
@@ -131,7 +131,7 @@ ALTER SEQUENCE public.doctors_person_id_seq OWNED BY public.doctors.person_id;
 CREATE TABLE public.patients (
     upi character varying NOT NULL,
     person_id bigint NOT NULL,
-    doctors_id bigint,
+    doctor_id bigint,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     CONSTRAINT npi_check CHECK (((upi)::text ~ '^[a-z0-9]{18}$'::text))
@@ -333,10 +333,10 @@ CREATE INDEX index_doctors_on_person_id ON public.doctors USING btree (person_id
 
 
 --
--- Name: index_patients_on_doctors_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_patients_on_doctor_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_patients_on_doctors_id ON public.patients USING btree (doctors_id);
+CREATE INDEX index_patients_on_doctor_id ON public.patients USING btree (doctor_id);
 
 
 --
