@@ -4,7 +4,7 @@ class CreateAppointments < ActiveRecord::Migration[7.0]
       t.references :patient, null: false, column: :person_id
       t.references :doctor, null: true, column: :person_id, primary_key: :person_id
       t.tstzrange :timerange, null: false
-      t.check_constraint "doctor_id <> patient_id", name: "npi_check"
+      t.check_constraint "doctor_id <> patient_id", name: "check_if_dr_and_patient_are_different"
 
       t.timestamps
     end
@@ -21,7 +21,7 @@ class CreateAppointments < ActiveRecord::Migration[7.0]
     SQL
   end
 
-    
+
   def down
     drop_table :appointments
     execute 'DROP EXTENSION btree_gist';
