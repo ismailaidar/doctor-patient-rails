@@ -1,0 +1,8 @@
+development:
+  adapter: postgresql
+  database: sha_project
+  encoding: unicode
+  username: postgres
+  password: password
+  port: 5432
+  host: localhost
