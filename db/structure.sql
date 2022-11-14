@@ -134,7 +134,7 @@ CREATE TABLE public.patients (
     doctor_id bigint,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    CONSTRAINT npi_check CHECK (((upi)::text ~ '^[a-z0-9]{18}$'::text))
+    CONSTRAINT upi_check CHECK (((upi)::text ~ '^[a-z0-9]{18}$'::text))
 );
 
 
@@ -302,6 +302,13 @@ ALTER TABLE ONLY public.appointments
 --
 
 CREATE UNIQUE INDEX check_npi_unique ON public.doctors USING btree (npi);
+
+
+--
+-- Name: check_upi_unique; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX check_upi_unique ON public.patients USING btree (upi);
 
 
 --
