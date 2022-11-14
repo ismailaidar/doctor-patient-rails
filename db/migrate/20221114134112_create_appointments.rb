@@ -24,7 +24,10 @@ class CreateAppointments < ActiveRecord::Migration[7.0]
       end
       dir.down do
         execute <<-SQL
-          DROP EXTENSION btree_gist;
+          ALTER TABLE IF EXISTS ONLY appointments
+            DROP CONSTRAINT timerange_exclude_no_overlap_doctor_id,
+            DROP CONSTRAINT timerange_exclude_no_overlap_patient_id; -- multi constraint in alter
+          DROP EXTENSION btree_gist; -- after drop
         SQL
       end
     end
