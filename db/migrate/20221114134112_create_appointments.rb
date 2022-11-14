@@ -3,7 +3,7 @@ class CreateAppointments < ActiveRecord::Migration[7.0]
     create_table :appointments do |t|
       t.references :patient, null: false, column: :person_id
       t.references :doctor, null: true, column: :person_id, primary_key: :person_id
-      t.daterange :timerange, null: false
+      t.timerange :timerange, null: false
       t.check_constraint "doctor_id::integer <> patient_id::integer", name: "npi_check"
 
       t.timestamps
