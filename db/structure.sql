@@ -9,9 +9,76 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+--
+-- Name: btree_gist; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS btree_gist WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION btree_gist; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION btree_gist IS 'support for indexing common datatypes in GiST';
+
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
+
+--
+-- Name: appointments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.appointments (
+    id bigint NOT NULL,
+    patient_id bigint NOT NULL,
+    doctor_id bigint NOT NULL,
+    timerange tstzrange NOT NULL,
+    created_at timestamp(6) without time zone NOT NULL,
+    updated_at timestamp(6) without time zone NOT NULL,
+    CONSTRAINT npi_check CHECK ((doctor_id <> patient_id))
+);
+
+
+--
+-- Name: appointments_doctor_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.appointments_doctor_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: appointments_doctor_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.appointments_doctor_id_seq OWNED BY public.appointments.doctor_id;
+
+
+--
+-- Name: appointments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.appointments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: appointments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.appointments_id_seq OWNED BY public.appointments.id;
+
 
 --
 -- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -
@@ -132,6 +199,20 @@ CREATE TABLE public.schema_migrations (
 
 
 --
+-- Name: appointments id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.appointments ALTER COLUMN id SET DEFAULT nextval('public.appointments_id_seq'::regclass);
+
+
+--
+-- Name: appointments doctor_id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.appointments ALTER COLUMN doctor_id SET DEFAULT nextval('public.appointments_doctor_id_seq'::regclass);
+
+
+--
 -- Name: doctors person_id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -150,6 +231,14 @@ ALTER TABLE ONLY public.patients ALTER COLUMN person_id SET DEFAULT nextval('pub
 --
 
 ALTER TABLE ONLY public.people ALTER COLUMN id SET DEFAULT nextval('public.people_id_seq'::regclass);
+
+
+--
+-- Name: appointments appointments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.appointments
+    ADD CONSTRAINT appointments_pkey PRIMARY KEY (id);
 
 
 --
@@ -193,10 +282,40 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
+-- Name: appointments timerange_exclude_no_overlap_doctor_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.appointments
+    ADD CONSTRAINT timerange_exclude_no_overlap_doctor_id EXCLUDE USING gist (timerange WITH &&, doctor_id WITH =);
+
+
+--
+-- Name: appointments timerange_exclude_no_overlap_patient_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.appointments
+    ADD CONSTRAINT timerange_exclude_no_overlap_patient_id EXCLUDE USING gist (timerange WITH &&, patient_id WITH =);
+
+
+--
 -- Name: check_npi_unique; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX check_npi_unique ON public.doctors USING btree (npi);
+
+
+--
+-- Name: index_appointments_on_doctor_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_appointments_on_doctor_id ON public.appointments USING btree (doctor_id);
+
+
+--
+-- Name: index_appointments_on_patient_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_appointments_on_patient_id ON public.appointments USING btree (patient_id);
 
 
 --
@@ -252,6 +371,7 @@ SET search_path TO "$user", public;
 INSERT INTO "schema_migrations" (version) VALUES
 ('20221114125656'),
 ('20221114130035'),
-('20221114130911');
+('20221114130911'),
+('20221114134112');
 
 
