@@ -13,11 +13,10 @@ class CreateAppointments < ActiveRecord::Migration[7.0]
         # add a CHECK constraint
         execute <<-SQL
         CREATE EXTENSION btree_gist;
-        ALTER TABLE appointments
+        ALTER TABLE IF EXISTS ONLY appointments
         ADD CONSTRAINT timerange_exclude_no_overlap_doctor_id
         EXCLUDE USING GIST (timerange WITH &&, -- && no overlap
-                          doctor_id with =);
-        ALTER TABLE appointments
+                          doctor_id with =),
         ADD CONSTRAINT timerange_exclude_no_overlap_patient_id -- = if the Dr_id is identical the range must not overlap
         EXCLUDE USING GIST (timerange WITH &&, 
                 patient_id with =);
@@ -26,10 +25,6 @@ class CreateAppointments < ActiveRecord::Migration[7.0]
       dir.down do
         execute <<-SQL
           DROP EXTENSION btree_gist;
-          ALTER TABLE appointments
-          DROP CONSTRAINT timerange_exclude_no_overlap_doctor_id;
-            ALTER TABLE appointments
-            DROP CONSTRAINT timerange_exclude_no_overlap_patient_id;
         SQL
       end
     end
