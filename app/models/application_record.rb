@@ -5,6 +5,5 @@ class ApplicationRecord < ActiveRecord::Base
     save(validate: false)
   rescue ActiveRecord::ActiveRecordError 
     valid?
-    # if self.class == Doctor
   end
 end
