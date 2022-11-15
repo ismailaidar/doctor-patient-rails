@@ -6,6 +6,7 @@ class CreatePatients < ActiveRecord::Migration[7.0]
       t.references :doctor, null: true
       t.check_constraint "upi::text ~ '^[a-z0-9]{18}$'::text", name: "upi_check"
       t.index :upi, name: 'check_upi_unique', unique: true
+      t.check_constraint "doctor_id <> person_id", name: "check_if_dr_and_person_are_different"
 
       t.timestamps
     end
