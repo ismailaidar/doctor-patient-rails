@@ -1,2 +1,6 @@
-<h1>Doctors#show</h1>
-<p>Find me in app/views/doctors/show.html.erb</p>
+<p style="color: green"><%= notice %></p>
+<h1>Doctor <%= @doctor.full_name %></h1>
+<label for="">NPI</label>
+<h4><%= @doctor.npi %></h4>
+ <%= link_to "Edit this doctor", edit_doctor_path(@doctor) %> |
+  <%= link_to "Back to doctors", doctors_path %>

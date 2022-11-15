@@ -1,5 +1,5 @@
 class DoctorsController < ApplicationController
-  before_action :set_doctor, only: %i[ show edit update  ]
+  before_action :set_doctor, only: %i[ show edit update destroy ]
   def index
     @doctors = Doctor.order("person_id DESC")
   end
@@ -14,16 +14,30 @@ class DoctorsController < ApplicationController
 
   def create
     @doctor = Doctor.new(doctor_params)
-    @doctor.build_person doctor_params[:person_attributes]
+    
     if @doctor.commit
       redirect_to doctor_url(@doctor), notice: "Doctor was successfully created."
     else
+      @doctor.build_person doctor_params[:person_attributes]
       render :new, status: :unprocessable_entity
     end
   
   end
 
   def edit
+  end
+
+  def update
+    if @doctor.update(doctor_params)
+      redirect_to doctor_url(@doctor), notice: "Doctor was successfully updated."
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    @doctor.destroy
+    redirect_to doctors_url, notice: "Doctor was successfully destroyed."
   end
 
   private
