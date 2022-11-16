@@ -29,7 +29,7 @@ class DoctorsController < ApplicationController
 
   def update
     @doctor.assign_attributes({ npi: doctor_params[:npi], person_attributes:doctor_params[:person_attributes]})
-    if @doctor.commit(doctor_params)
+    if @doctor.commit
       redirect_to doctor_url(@doctor), notice: "Doctor was successfully updated."
     else
       render :edit, status: :unprocessable_entity
