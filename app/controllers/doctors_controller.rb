@@ -39,6 +39,8 @@ class DoctorsController < ApplicationController
   def destroy
     @doctor.destroy
     redirect_to doctors_url, notice: "Doctor was successfully destroyed."
+  rescue 
+    redirect_to doctors_url, alert: "The doctor has many appointment you must delete them before."
   end
 
   private
