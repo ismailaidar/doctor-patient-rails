@@ -1,8 +1,9 @@
 class CreateAppointments < ActiveRecord::Migration[7.0]
   def up
     create_table :appointments do |t|
-      t.references :patient, null: false, column: :person_id
-      t.references :doctor, null: true, column: :person_id, primary_key: :person_id
+      t.references :patient, null: false, foreign_key: { primary_key: :person_id }
+      t.references :doctor, null: false, foreign_key: { primary_key: :person_id }
+      t.integer :status, null: false, default: 0
       t.tstzrange :timerange, null: false
       t.check_constraint "doctor_id <> patient_id", name: "check_if_dr_and_patient_are_different"
 

@@ -35,30 +35,12 @@ CREATE TABLE public.appointments (
     id bigint NOT NULL,
     patient_id bigint NOT NULL,
     doctor_id bigint NOT NULL,
+    status integer DEFAULT 0 NOT NULL,
     timerange tstzrange NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     CONSTRAINT check_if_dr_and_patient_are_different CHECK ((doctor_id <> patient_id))
 );
-
-
---
--- Name: appointments_doctor_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.appointments_doctor_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: appointments_doctor_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.appointments_doctor_id_seq OWNED BY public.appointments.doctor_id;
 
 
 --
@@ -131,7 +113,7 @@ ALTER SEQUENCE public.doctors_person_id_seq OWNED BY public.doctors.person_id;
 CREATE TABLE public.patients (
     upi character varying NOT NULL,
     person_id bigint NOT NULL,
-    doctor_id bigint,
+    doctor_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     CONSTRAINT check_if_dr_and_person_are_different CHECK ((doctor_id <> person_id)),
@@ -206,13 +188,6 @@ CREATE TABLE public.schema_migrations (
 --
 
 ALTER TABLE ONLY public.appointments ALTER COLUMN id SET DEFAULT nextval('public.appointments_id_seq'::regclass);
-
-
---
--- Name: appointments doctor_id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.appointments ALTER COLUMN doctor_id SET DEFAULT nextval('public.appointments_doctor_id_seq'::regclass);
 
 
 --
@@ -355,6 +330,30 @@ CREATE INDEX index_patients_on_person_id ON public.patients USING btree (person_
 
 ALTER TABLE ONLY public.doctors
     ADD CONSTRAINT fk_rails_1046c05cde FOREIGN KEY (person_id) REFERENCES public.people(id);
+
+
+--
+-- Name: appointments fk_rails_8db8e1e8a5; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.appointments
+    ADD CONSTRAINT fk_rails_8db8e1e8a5 FOREIGN KEY (doctor_id) REFERENCES public.doctors(person_id);
+
+
+--
+-- Name: patients fk_rails_9739853ad1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.patients
+    ADD CONSTRAINT fk_rails_9739853ad1 FOREIGN KEY (doctor_id) REFERENCES public.doctors(person_id);
+
+
+--
+-- Name: appointments fk_rails_c63da04ab4; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.appointments
+    ADD CONSTRAINT fk_rails_c63da04ab4 FOREIGN KEY (patient_id) REFERENCES public.patients(person_id);
 
 
 --
