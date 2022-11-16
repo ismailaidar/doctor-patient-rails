@@ -1,5 +1,5 @@
 <p style="color: green"><%= notice %></p>
-<h1>Doctor <%= @doctor.full_name %></h1>
+<h1>Doctor <%= @doctor.person.full_name %></h1>
 <label for="">NPI</label>
 <h4><%= @doctor.npi %></h4>
  <%= link_to "Edit this doctor", edit_doctor_path(@doctor) %> |
