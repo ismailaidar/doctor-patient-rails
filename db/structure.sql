@@ -167,7 +167,9 @@ CREATE TABLE public.people (
     first_name character varying NOT NULL,
     last_name character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL
+    updated_at timestamp(6) without time zone NOT NULL,
+    CONSTRAINT first_name_check CHECK (((first_name)::text <> ''::text)),
+    CONSTRAINT last_name_check CHECK (((last_name)::text <> ''::text))
 );
 
 
