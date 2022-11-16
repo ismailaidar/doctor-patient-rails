@@ -24,14 +24,17 @@
   </div>
 
   <%= form.fields_for :person do |person_attributes|%>
-  <div class="field">
-    <%= person_attributes.label :first_name %>
-    <%= person_attributes.text_field :first_name %>
-  </div>
-  <div class="field">
-      <%= person_attributes.label :last_name %>
-      <%= person_attributes.text_field :last_name %>
-  </div>
+    <div class="field">
+      <%= person_attributes.label :first_name %>
+      <%= person_attributes.text_field :first_name %>
+    </div>
+    <div class="field">
+        <%= person_attributes.label :last_name %>
+        <%= person_attributes.text_field :last_name %>
+    </div>
+    <% if doctor.person.id != nil %>
+        <%= person_attributes.hidden_field :id, value: doctor.person_id %>
+    <% end %>
   <% end %>
 
   <div>

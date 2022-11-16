@@ -1,7 +1,7 @@
 class DoctorsController < ApplicationController
   before_action :set_doctor, only: %i[ show edit update destroy ]
   def index
-    @doctors = Doctor.order("person_id DESC")
+    @doctors = Doctor.includes(:person).order("person_id DESC")
   end
 
   def show
@@ -9,7 +9,7 @@ class DoctorsController < ApplicationController
 
   def new
     @doctor = Doctor.new
-    @doctor.build_person 
+    @doctor.build_person
   end
 
   def create
@@ -28,7 +28,8 @@ class DoctorsController < ApplicationController
   end
 
   def update
-    if @doctor.update(doctor_params)
+    @doctor.assign_attributes({ npi: doctor_params[:npi], person_attributes:doctor_params[:person_attributes]})
+    if @doctor.commit(doctor_params)
       redirect_to doctor_url(@doctor), notice: "Doctor was successfully updated."
     else
       render :edit, status: :unprocessable_entity
@@ -42,10 +43,10 @@ class DoctorsController < ApplicationController
 
   private
   def set_doctor
-    @doctor = Doctor.find(params[:id])
+    @doctor = Doctor.includes(:person).find(params[:id])
   end
 
   def doctor_params
-    params.require(:doctor).permit(:npi, person_attributes: [:first_name, :last_name] )
+    params.require(:doctor).permit(:npi, person_attributes: [:id ,:first_name, :last_name] )
   end
 end
