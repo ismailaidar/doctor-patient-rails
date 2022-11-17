@@ -53,7 +53,7 @@ class PeopleController < ApplicationController
       format.html { redirect_to people_url, notice: "Person was successfully destroyed." }
     end
   rescue ActiveRecord::ActiveRecordError
-    redirect_to doctors_url, alert: "The person has many doctors or patients that you must delete before."
+    redirect_to person_url(@person), alert: "The person has a patient or doctor associated with it."
   end
 
   private
