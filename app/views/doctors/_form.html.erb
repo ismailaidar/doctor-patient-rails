@@ -1,20 +1,15 @@
 <%= form_with(model: doctor) do |form| %>
   <% if doctor.errors.any? %>
     <div style="color: red">
-    <h2><%= pluralize(doctor.errors.count, "error") %> prohibited this doctor from being saved:</h2>
-
-    <ul>
+      <h2><%= pluralize(doctor.errors.count, "error") %> prohibited this doctor from being saved:</h2>
+      <ul>
         <% doctor.errors.each do |error| %>
         <li><%= error.full_message %></li>
         <% end %>
-    </ul>
-    
-    <% flash.each do |type, msg| %>
-        <div class="alert alert-info">
-        <%= msg %> 
-        </div>
-    <% end %>
-
+      </ul>
+      <% flash.each do |type, msg| %>
+        <div class="alert alert-info"><%= msg %> </div>
+      <% end %>
     </div>
   <% end %>
   
@@ -29,15 +24,15 @@
       <%= person_attributes.text_field :first_name %>
     </div>
     <div class="field">
-        <%= person_attributes.label :last_name %>
-        <%= person_attributes.text_field :last_name %>
+      <%= person_attributes.label :last_name %>
+      <%= person_attributes.text_field :last_name %>
     </div>
     <% if doctor.person.id != nil %>
-        <%= person_attributes.hidden_field :id, value: doctor.person_id %>
+      <%= person_attributes.hidden_field :id, value: doctor.person_id %>
     <% end %>
   <% end %>
 
   <div>
-      <%= form.submit %>
+    <%= form.submit %>
   </div>
 <% end %>

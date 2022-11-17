@@ -14,11 +14,10 @@ class CreateAppointments < ActiveRecord::Migration[7.0]
       
       ALTER TABLE appointments
       ADD CONSTRAINT timerange_exclude_no_overlap_doctor_id
-      EXCLUDE USING GIST (timerange WITH &&,
-                        doctor_id with =),
+      EXCLUDE USING GIST (timerange WITH &&, doctor_id with =),
+                        
       ADD CONSTRAINT timerange_exclude_no_overlap_patient_id
-      EXCLUDE USING GIST (timerange WITH &&, 
-              patient_id with =);
+      EXCLUDE USING GIST (timerange WITH &&, patient_id with =);
     SQL
   end
 

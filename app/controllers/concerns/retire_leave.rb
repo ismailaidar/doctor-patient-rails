@@ -2,7 +2,6 @@ module RetireLeave
 	extend ActiveSupport::Concern
 
 	def get_status_msg(action = nil)
-    
     status = { index: :active, msg: "something's wrong", error: false }
     if action == 'retire'
       status[:index] = :retire
@@ -15,5 +14,4 @@ module RetireLeave
     end
     return status
   end
-
 end
