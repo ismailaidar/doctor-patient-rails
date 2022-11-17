@@ -80,6 +80,7 @@ CREATE TABLE public.ar_internal_metadata (
 
 CREATE TABLE public.doctors (
     npi character varying NOT NULL,
+    status integer DEFAULT 0,
     person_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
