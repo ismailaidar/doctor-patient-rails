@@ -1,5 +1,7 @@
 class DoctorsController < ApplicationController
   before_action :set_doctor, only: %i[ show edit update destroy ]
+
+  include RetireLeave
   def index
     @doctors = Doctor.includes(:person).order("person_id DESC")
   end
@@ -21,7 +23,6 @@ class DoctorsController < ApplicationController
       @doctor.build_person doctor_params[:person_attributes]
       render :new, status: :unprocessable_entity
     end
-  
   end
 
   def edit
@@ -39,9 +40,23 @@ class DoctorsController < ApplicationController
   def destroy
     @doctor.destroy
     redirect_to doctors_url, notice: "Doctor was successfully destroyed."
-  rescue 
-    redirect_to doctors_url, alert: "The doctor has many appointment you must delete them before."
+  rescue ActiveRecord::ActiveRecordError
+    redirect_to doctors_url, alert: "The doctor has many appointments or patients that you must delete before."
   end
+
+  def retire_leave
+    @doctor = Doctor.includes(:person).find(params[:id])
+    action = params[:retire_leave]
+    status = get_status_msg(action) 
+    if status[:error] == true
+      redirect_to doctor_url(@doctor), alert: status[:msg]
+    end
+    @doctor.update(status: status[:index])
+    @doctor.appointments.update_all(status: :error)
+    redirect_to doctor_url(@doctor), notice: status[:msg]
+  end
+
+  
 
   private
   def set_doctor
