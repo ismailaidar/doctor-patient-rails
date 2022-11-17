@@ -11,16 +11,13 @@ class DoctorsController < ApplicationController
 
   def new
     @doctor = Doctor.new
-    @doctor.build_person
   end
 
   def create
     @doctor = Doctor.new(doctor_params)
-    
     if @doctor.commit
       redirect_to doctor_url(@doctor), notice: "Doctor was successfully created."
     else
-      @doctor.build_person doctor_params[:person_attributes]
       render :new, status: :unprocessable_entity
     end
   end
@@ -29,7 +26,7 @@ class DoctorsController < ApplicationController
   end
 
   def update
-    @doctor.assign_attributes({ npi: doctor_params[:npi], person_attributes:doctor_params[:person_attributes]})
+    @doctor.assign_attributes({ npi: doctor_params[:npi], person_id: doctor_params[:person_id] })
     if @doctor.commit
       redirect_to doctor_url(@doctor), notice: "Doctor was successfully updated."
     else
@@ -41,7 +38,7 @@ class DoctorsController < ApplicationController
     @doctor.destroy
     redirect_to doctors_url, notice: "Doctor was successfully destroyed."
   rescue ActiveRecord::ActiveRecordError
-    redirect_to doctors_url, alert: "The doctor has many appointments or patients that you must delete before."
+    redirect_to doctors_url, alert: "The doctor has appointments or patients that you must delete before."
   end
 
   def retire_leave
@@ -64,6 +61,6 @@ class DoctorsController < ApplicationController
   end
 
   def doctor_params
-    params.require(:doctor).permit(:npi, person_attributes: [:id ,:first_name, :last_name] )
+    params.require(:doctor).permit(:npi, :person_id )
   end
 end

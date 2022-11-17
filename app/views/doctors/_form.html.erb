@@ -17,20 +17,10 @@
     <%= form.label :npi %>
     <%= form.text_field :npi %>
   </div>
-
-  <%= form.fields_for :person do |person_attributes|%>
-    <div class="field">
-      <%= person_attributes.label :first_name %>
-      <%= person_attributes.text_field :first_name %>
-    </div>
-    <div class="field">
-      <%= person_attributes.label :last_name %>
-      <%= person_attributes.text_field :last_name %>
-    </div>
-    <% if doctor.person.id != nil %>
-      <%= person_attributes.hidden_field :id, value: doctor.person_id %>
-    <% end %>
-  <% end %>
+  <div class="field">
+    <%= form.label :person_id %>
+    <%= form.collection_select :person_id, Person.order(:id), :id, :full_name , include_blank: '-- select person -- ' %>
+  </div>
 
   <div>
     <%= form.submit %>
