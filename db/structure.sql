@@ -23,6 +23,27 @@ CREATE EXTENSION IF NOT EXISTS btree_gist WITH SCHEMA public;
 COMMENT ON EXTENSION btree_gist IS 'support for indexing common datatypes in GiST';
 
 
+--
+-- Name: enum_status_appointment; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.enum_status_appointment AS ENUM (
+    'ok',
+    'error'
+);
+
+
+--
+-- Name: enum_status_doctor; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.enum_status_doctor AS ENUM (
+    'active',
+    'retire',
+    'leave'
+);
+
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
@@ -35,7 +56,7 @@ CREATE TABLE public.appointments (
     id bigint NOT NULL,
     patient_id bigint NOT NULL,
     doctor_id bigint NOT NULL,
-    status integer DEFAULT 0 NOT NULL,
+    status public.enum_status_appointment DEFAULT 'ok'::public.enum_status_appointment NOT NULL,
     timerange tstzrange NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
@@ -80,7 +101,7 @@ CREATE TABLE public.ar_internal_metadata (
 
 CREATE TABLE public.doctors (
     npi character varying NOT NULL,
-    status integer DEFAULT 0,
+    status public.enum_status_doctor DEFAULT 'active'::public.enum_status_doctor NOT NULL,
     person_id bigint NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
