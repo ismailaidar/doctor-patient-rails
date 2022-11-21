@@ -1,7 +1,6 @@
 class DoctorsController < ApplicationController
   before_action :set_doctor, only: %i[show edit update destroy]
 
-  include RetireLeave
   def index
     @doctors = Doctor.includes(:person).order('person_id DESC')
   end
@@ -24,7 +23,11 @@ class DoctorsController < ApplicationController
   def edit; end
 
   def update
-    @doctor.assign_attributes({ npi: doctor_params[:npi], person_id: doctor_params[:person_id] })
+    @doctor.assign_attributes({
+                                npi: doctor_params[:npi],
+                                person_id: doctor_params[:person_id],
+                                status: doctor_params[:status]
+                              })
     if @doctor.commit
       redirect_to doctor_url(@doctor), notice: 'Doctor was successfully updated.'
     else
@@ -39,18 +42,6 @@ class DoctorsController < ApplicationController
     redirect_to doctors_url, alert: 'The doctor has appointments or patients that you must delete before.'
   end
 
-  def retire_leave
-    @doctor = Doctor.includes(:person).find(params[:id])
-    action = params[:retire_leave]
-    status = get_status_msg(action)
-    redirect_to doctor_url(@doctor), alert: status[:msg] if status[:error] == true
-    Doctor.Transaction do
-      @doctor.update(status: status[:index])
-      @doctor.appointments.update_all(status: :error)
-    end
-    redirect_to doctor_url(@doctor), notice: status[:msg]
-  end
-
   private
 
   def set_doctor
@@ -58,6 +49,6 @@ class DoctorsController < ApplicationController
   end
 
   def doctor_params
-    params.require(:doctor).permit(:npi, :person_id)
+    params.require(:doctor).permit(:npi, :person_id, :status)
   end
 end

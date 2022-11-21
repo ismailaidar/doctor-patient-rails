@@ -1,7 +1,9 @@
 class Doctor < ApplicationRecord
   belongs_to :person
   has_many :appointments
-  enum :status, { active: 0, leave: 1, retire: 2 }
+  enum :status, {
+    active: 'active', leave: 'leave', retire: 'retire'
+  }, default: 'active', prefix: true
   validates :person, uniqueness: true
   validates :npi, presence: true, length: { is: 10 }, format: { with: /\A[0-9]+\z/, message: 'only allows numbers' },
                   uniqueness: true

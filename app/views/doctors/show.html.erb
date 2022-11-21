@@ -3,19 +3,11 @@
 <h4><%= @doctor.npi %></h4>
   <%= link_to "Edit this doctor", edit_doctor_path(@doctor) %> |
   <%= link_to "Back to doctors", doctors_path %>
-<% if @doctor.status == 'active' %>
-<%= form_with url: leave_retire_path(@doctor) , method: :post do |form| %>
-  <%= form.hidden_field :retire_leave, value: "leave" %>
-  <%= form.submit 'leave' %>
+<% if @doctor.status_leave? %>
+  <p style="color: red" >This doctor left.</p>
 <% end %>
-<%= form_with url: leave_retire_path(@doctor) , method: :post do |form| %>
-  <%= form.hidden_field :retire_leave, value: "retire" %>
-  <%= form.submit 'retire' %>
-<% end %>
-<% elsif @doctor.status == 'leave' %>
-  <p style="color: red" >the doctor was successfully left</p>
-<% else %>
-  <p style="color: red" > the doctor was successfully retire </p>
+<% if @doctor.status_retire? %>
+  <p style="color: red" > This doctor is retired. </p>
 <% end %>
 
 

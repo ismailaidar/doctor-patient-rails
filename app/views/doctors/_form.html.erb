@@ -21,7 +21,13 @@
     <%= form.label :person_id %>
     <%= form.collection_select :person_id, Person.order(:id), :id, :full_name , include_blank: '-- select person -- ' %>
   </div>
-
+  <% if doctor.persisted?  %>
+    <div class="field">
+      <%= form.label :status %>
+      <%= form.select :status, ["active", "retire", "leave"] %>
+    </div>
+  <% end %>
+  
   <div>
     <%= form.submit %>
   </div>

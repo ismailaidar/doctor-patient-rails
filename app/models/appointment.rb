@@ -1,5 +1,6 @@
 class Appointment < ApplicationRecord
-	belongs_to :doctor
-	enum :status, { good: 0, error: 1 }
+  belongs_to :doctor
+  enum :status, {
+    ok: 'ok', error: 'error'
+  }, default: 'ok'
 end
-  
