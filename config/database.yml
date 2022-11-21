@@ -1,8 +1,15 @@
-development:
+default: &default
   adapter: postgresql
-  database: sha_project
   encoding: unicode
   username: postgres
   password: password
   port: 5432
   host: localhost
+
+development:
+  <<: *default
+  database: sha_project
+
+test:
+  <<: *default
+  database: sha_project_test
