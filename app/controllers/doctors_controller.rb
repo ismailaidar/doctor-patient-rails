@@ -40,9 +40,9 @@ class DoctorsController < ApplicationController
     @doctor.destroy
     redirect_to doctors_url, notice: 'Doctor was successfully destroyed.'
   rescue ActiveRecord::InvalidForeignKey
-    redirect_to doctors_url, alert: 'The doctor has appointments or patients that you must delete before.'
+    redirect_to doctor_url(@doctor), alert: 'The doctor has appointments or patients that you must delete before.'
   rescue ActiveRecord::ActiveRecordError
-    redirect_to doctors_url, alert: "something's wrong"
+    redirect_to doctor_url(@doctor), alert: "something's wrong"
   end
 
   private
