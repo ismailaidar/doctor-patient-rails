@@ -3,7 +3,7 @@ class ApplicationRecord < ActiveRecord::Base
 
   def commit
     save(validate: false)
-  rescue ActiveRecord::ActiveRecordError 
+  rescue ActiveRecord::ActiveRecordError
     valid?
   end
 end
