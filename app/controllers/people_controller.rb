@@ -20,38 +20,34 @@ class PeopleController < ApplicationController
   # POST /people or /people.json
   def create
     @person = Person.new(person_params)
-
-    respond_to do |format|
-      if @person.save
-        format.html { redirect_to person_url(@person), notice: 'Person was successfully created.' }
-        format.json { render :show, status: :created, location: @person }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @person.errors, status: :unprocessable_entity }
-      end
+    if @person.commit
+      redirect_to person_url(@person), notice: 'Person was successfully created.'
+    else
+      render :new, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /people/1 or /people/1.json
   def update
-    respond_to do |format|
-      if @person.update(person_params)
-        format.html { redirect_to person_url(@person), notice: 'Person was successfully updated.' }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-      end
+    @person.assign_attributes({
+                                first_name: person_params[:first_name],
+                                last_name: person_params[:last_name]
+                              })
+    if @person.commit
+      redirect_to person_url(@person), notice: 'Person was successfully updated.'
+    else
+      render :edit, status: :unprocessable_entity
     end
   end
 
   # DELETE /people/1 or /people/1.json
   def destroy
     @person.destroy
-
-    respond_to do |format|
-      format.html { redirect_to people_url, notice: 'Person was successfully destroyed.' }
-    end
-  rescue ActiveRecord::ActiveRecordError
+    redirect_to people_url, notice: 'Person was successfully destroyed.'
+  rescue ActiveRecord::InvalidForeignKey
     redirect_to person_url(@person), alert: 'The person has a patient or doctor associated with it.'
+  rescue ActiveRecord::ActSiveRecordError
+    redirect_to person_url(@person), alert: "something's wrong"
   end
 
   private
