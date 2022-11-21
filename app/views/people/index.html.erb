@@ -1,12 +1,26 @@
 <h1>People</h1>
 
 <div id="people">
-  <% @people.each do |person| %>
-    <%= render person %>
-    <p>
-      <%= link_to "Show this person", person %>
-    </p>
-  <% end %>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>IDS</th>
+        <th>FIRST NAME</th>
+        <th>LAST NAME</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @people.each do |person| %>
+      <tr>
+        <td><%= person.id %></td>
+        <td><%= person.first_name %></td>
+        <td><%= person.last_name %></td>
+        <td>
+          <%= link_to 'Show', person, class: 'dropdown-item', class: 'btn btn-primary' %>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>
-
-<%= link_to "New person", new_person_path %>
+<%= link_to "New person", new_person_path, class: 'btn btn-primary' %>

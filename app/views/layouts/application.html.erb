@@ -7,13 +7,16 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application" %>
+    <%= javascript_tag %>
   </head>
 
   <body>
-    <% flash.each do |type, msg| %>
-      <div <% if type == "notice" %>style="color: green" <% else %> style="color: red" <% end %> > 
-        <%= msg %></div>
-    <% end %>
-    <%= yield %>
+    <div class="container">
+      <%= render 'partials/navbar' %>
+      <div class="mt-4">
+        <%= render 'partials/alert' %>
+        <%= yield %>
+      </div>
+    </div>
   </body>
 </html>
