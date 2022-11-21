@@ -29,6 +29,7 @@ class DoctorsController < ApplicationController
                                 status: doctor_params[:status]
                               })
     if @doctor.commit
+      @doctor.appointments.update_all(status: :error)
       redirect_to doctor_url(@doctor), notice: 'Doctor was successfully updated.'
     else
       render :edit, status: :unprocessable_entity
@@ -38,8 +39,10 @@ class DoctorsController < ApplicationController
   def destroy
     @doctor.destroy
     redirect_to doctors_url, notice: 'Doctor was successfully destroyed.'
-  rescue ActiveRecord::ActiveRecordError
+  rescue ActiveRecord::InvalidForeignKey
     redirect_to doctors_url, alert: 'The doctor has appointments or patients that you must delete before.'
+  rescue ActiveRecord::ActiveRecordError
+    redirect_to doctors_url, alert: "something's wrong"
   end
 
   private
