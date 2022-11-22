@@ -48,7 +48,7 @@ class DoctorsController < ApplicationController
   private
 
   def set_doctor
-    @doctor = Doctor.includes(:person).find(params[:id])
+    @doctor = Doctor.includes(:person).find_by_person_id(params[:id])
   end
 
   def doctor_params
