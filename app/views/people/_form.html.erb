@@ -1,6 +1,6 @@
 <%= form_with(model: person) do |form| %>
-  <div class="alert alert-danger" role="alert">
-    <% if person.errors.any? %>
+  <% if person.errors.any? %>
+    <div class="alert alert-danger" role="alert">
       <div style="color: red">
         <h3></h3><%= pluralize(person.errors.count, "error") %> prohibited this person from being saved:</h3>
           <ul>
@@ -9,8 +9,8 @@
             <% end %>
           </ul>
       </div>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 
   
 
