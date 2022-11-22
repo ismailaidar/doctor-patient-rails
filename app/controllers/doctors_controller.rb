@@ -25,7 +25,6 @@ class DoctorsController < ApplicationController
   def update
     @doctor.assign_attributes({
                                 npi: doctor_params[:npi],
-                                person_id: doctor_params[:person_id],
                                 status: doctor_params[:status]
                               })
     if @doctor.commit

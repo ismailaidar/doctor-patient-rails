@@ -19,15 +19,17 @@
     <%= form.label :npi %>
     <%= form.text_field :npi, class: 'form-control' %>
   </div>
-  <div class="form-group">
-    <%= form.label :person_id %>
-    <%= form.collection_select :person_id, Person.order(:id), :id, :full_name , { include_blank: '-- select person -- '}, { class: 'form-control'} %>
-  </div>
+  
   <% if doctor.persisted?  %>
     <div class="form-group">
       <%= form.label :status %>
       <%= form.select :status, options_for_select(Doctor.statuses.keys, @doctor.status ), {}, { class: "form-control"}  %>
     </div>
+  <% else %>
+  <div class="form-group">
+    <%= form.label :person_id %>
+    <%= form.collection_select :person_id, Person.order(:id), :id, :full_name , { include_blank: '-- select person -- '}, { class: 'form-control'} %>
+  </div>
   <% end %>
   
   <div>
