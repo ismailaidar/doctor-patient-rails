@@ -1,37 +1,34 @@
 <%= form_with(model: doctor) do |form| %>
-    <% if doctor.errors.any? %>
-      <div class="alert alert-danger" role="alert">
-        <div style="color: red">
-          <h3><%= pluralize(doctor.errors.count, "error") %> prohibited this doctor from being saved:</h3>
-          <ul>
-            <% doctor.errors.each do |error| %>
+  <% if doctor.errors.any? %>
+    <div class="alert alert-danger" role="alert">
+      <div style="color: red">
+        <h3><%= pluralize(doctor.errors.count, "error") %> prohibited this doctor from being saved:</h3>
+        <ul>
+          <% doctor.errors.each do |error| %>
             <li><%= error.full_message %></li>
-            <% end %>
-          </ul>
-          <% flash.each do |type, msg| %>
-            <div class="alert alert-info"><%= msg %> </div>
           <% end %>
-        </div>
+        </ul>
+        <% flash.each do |type, msg| %>
+          <div class="alert alert-info"><%= msg %> </div>
+        <% end %>
       </div>
-    <% end %>
-  
+    </div>
+  <% end %>
   <div class="form-group">
     <%= form.label :npi %>
     <%= form.text_field :npi, class: 'form-control' %>
   </div>
-  
   <% if doctor.persisted?  %>
     <div class="form-group">
       <%= form.label :status %>
       <%= form.select :status, options_for_select(Doctor.statuses.keys, @doctor.status ), {}, { class: "form-control"}  %>
     </div>
   <% else %>
-  <div class="form-group">
-    <%= form.label :person_id %>
-    <%= form.collection_select :person_id, Person.order(:id), :id, :full_name , { include_blank: '-- select person -- '}, { class: 'form-control'} %>
-  </div>
+    <div class="form-group">
+      <%= form.label :person_id %>
+      <%= form.collection_select :person_id, Person.order(:id), :id, :full_name , { include_blank: '-- select person -- '}, { class: 'form-control'} %>
+    </div>
   <% end %>
-  
   <div>
     <%= form.submit class: 'btn btn-success mt-3' %>
   </div>
