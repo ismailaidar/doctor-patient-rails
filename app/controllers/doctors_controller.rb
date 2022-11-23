@@ -26,6 +26,7 @@ class DoctorsController < ApplicationController
     old_status = @doctor.status
     @doctor.assign_attributes({
                                 npi: doctor_params[:npi],
+                                person_id: doctor_params[:person_id],
                                 status: doctor_params[:status]
                               })
     Doctor.transaction do
@@ -41,7 +42,7 @@ class DoctorsController < ApplicationController
       end
     end
   rescue ActiveRecord::ActiveRecordError
-    redirect_to doctor_url(@doctor), alert: "something's wrong"
+    redirect_to edit_doctor_url(@doctor), alert: "something's wrong"
   end
 
   def destroy
@@ -65,7 +66,7 @@ class DoctorsController < ApplicationController
 
   def set_unassigned_people_and_status
     @people = Person.joins('LEFT OUTER JOIN doctors ON doctors.person_id = people.id')
-                    .where('doctors.person_id IS null')
+                    .where("doctors.person_id IS null or doctors.person_id = #{@doctor.try(:person_id) || 'null'}")
                     .order(:id)
     @statuses = Doctor.statuses.map { |v, k| [v, k.split('_').join(' ')] }
   end

@@ -18,15 +18,17 @@
     <%= form.label :npi %>
     <%= form.text_field :npi, class: 'form-control' %>
   </div>
-  <% if doctor.persisted?  %>
+  <div class="form-group">
+    <%= form.label :person_id %>
+    <%= form.collection_select :person_id,
+        @people, :id, :full_name ,
+        { :selected => @doctor.person_id},
+        { class: 'form-control'} %>
+  </div>
+  <% if doctor.persisted? == true %>
     <div class="form-group">
       <%= form.label :status %>
       <%= form.select :status, options_for_select(@statuses.collect { |value, key| [key, value] }, @doctor.status ), {}, { class: "form-control"}  %>
-    </div>
-  <% else %>
-    <div class="form-group">
-      <%= form.label :person_id %>
-      <%= form.collection_select :person_id, @people, :id, :full_name , { include_blank: '-- select person -- '}, { class: 'form-control'} %>
     </div>
   <% end %>
   <div>
