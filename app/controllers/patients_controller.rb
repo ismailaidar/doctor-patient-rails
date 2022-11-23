@@ -3,7 +3,7 @@ class PatientsController < ApplicationController
 
   # GET /patients
   def index
-    @patients = Patient.all
+    @patients = Patient.includes(:person, :doctor).order('person_id DESC')
   end
 
   # GET /patients/1
@@ -21,7 +21,7 @@ class PatientsController < ApplicationController
   def create
     @patient = Patient.new(patient_params)
 
-    if @patient.save
+    if @patient.commit
       redirect_to @patient, notice: 'Patient was successfully created.'
     else
       render :new, status: :unprocessable_entity
@@ -41,6 +41,10 @@ class PatientsController < ApplicationController
   def destroy
     @patient.destroy
     redirect_to patients_url, notice: 'Patient was successfully destroyed.'
+  rescue ActiveRecord::InvalidForeignKey
+    redirect_to patient_url(@patient), alert: 'This Patient has appointments that you must delete before.'
+  rescue ActiveRecord::ActiveRecordError
+    redirect_to patient_url(@patient), alert: "something's wrong"
   end
 
   private
