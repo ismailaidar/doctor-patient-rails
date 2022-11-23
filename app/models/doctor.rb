@@ -10,5 +10,6 @@ class Doctor < ApplicationRecord
   validate :check_status
   def check_status
     errors.add(:status, 'You must choose a valid status') unless %w[active on_leave
+                                                                    retired].include?(status)
   end
 end
