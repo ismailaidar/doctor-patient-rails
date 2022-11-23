@@ -23,16 +23,25 @@ class DoctorsController < ApplicationController
   def edit; end
 
   def update
+    old_status = @doctor.status
     @doctor.assign_attributes({
                                 npi: doctor_params[:npi],
                                 status: doctor_params[:status]
                               })
-    if @doctor.commit
-      @doctor.appointments.update_all(status: :error)
-      redirect_to doctor_url(@doctor), notice: 'Doctor was successfully updated.'
-    else
-      render :edit, status: :unprocessable_entity
+    @doctor.transaction do
+      if @doctor.commit
+        if old_status != 'active' && @doctor.status_active?
+          @doctor.appointments.update_all(status: :ok)
+        elsif old_status == 'active' && @doctor.status_active? == false
+          @doctor.appointments.update_all(status: :error)
+        end
+        redirect_to doctor_url(@doctor), notice: 'Doctor was successfully updated.'
+      else
+        render :edit, status: :unprocessable_entity
+      end
     end
+  rescue ActiveRecord::RecordInvalid => e
+    redirect_to doctor_url(@doctor), alert: "something's wrong"
   end
 
   def destroy
