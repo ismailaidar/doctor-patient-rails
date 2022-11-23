@@ -7,4 +7,8 @@ class Doctor < ApplicationRecord
   validates :person, uniqueness: true
   validates :npi, presence: true, length: { is: 10 }, format: { with: /\A[0-9]+\z/, message: 'only allows numbers' },
                   uniqueness: true
+
+  def full_name
+    person.full_name
+  end
 end
