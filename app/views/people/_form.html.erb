@@ -1,30 +1,27 @@
 <%= form_with(model: person) do |form| %>
   <% if person.errors.any? %>
-    <div class="alert alert-danger" role="alert">
-      <div style="color: red">
-        <h3></h3><%= pluralize(person.errors.count, "error") %> prohibited this person from being saved:</h3>
-          <ul>
-            <% person.errors.each do |error| %>
-              <li><%= error.full_message %></li>
-            <% end %>
-          </ul>
-      </div>
+    <div style="color: red">
+      <h2><%= pluralize(person.errors.count, "error") %> prohibited this person from being saved:</h2>
+
+      <ul>
+        <% person.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
     </div>
   <% end %>
 
-  
-
-  <div class='form-group'>
+  <div>
     <%= form.label :first_name, style: "display: block" %>
-    <%= form.text_field :first_name, class: 'form-control'  %>
-  </div>
-
-  <div class='form-group'>
-    <%= form.label :last_name, style: "display: block" %>
-    <%= form.text_field :last_name, class: 'form-control' %>
+    <%= form.text_field :first_name %>
   </div>
 
   <div>
-    <%= form.submit class: 'btn btn-success mt-3' %>
+    <%= form.label :last_name, style: "display: block" %>
+    <%= form.text_field :last_name %>
+  </div>
+
+  <div>
+    <%= form.submit %>
   </div>
 <% end %>

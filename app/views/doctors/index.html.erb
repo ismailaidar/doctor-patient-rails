@@ -4,6 +4,7 @@
   <table class="table table-striped">
     <thead>
       <tr>
+        <th>ID</th>
         <th>NPI</th>
         <th>FIRST NAME</th>
         <th>LAST NAME</th>
@@ -14,6 +15,7 @@
     <tbody>
       <% @doctors.each do |doctor| %>
       <tr>
+        <td><%= doctor.id %></td>
         <td><%= doctor.npi %></td>
         <td><%= doctor.person.first_name %></td>
         <td><%= doctor.person.last_name %></td>

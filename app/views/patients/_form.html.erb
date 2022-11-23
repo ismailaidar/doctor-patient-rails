@@ -1,32 +1,36 @@
 <%= form_with(model: patient) do |form| %>
-  <% if patient.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(patient.errors.count, "error") %> prohibited this patient from being saved:</h2>
-
-      <ul>
-        <% patient.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+    <% if patient.errors.any? %>
+      <div class="alert alert-danger" role="alert">
+        <div style="color: red">
+          <h3><%= pluralize(patient.errors.count, "error") %> prohibited this patient from being saved:</h3>
+          <ul>
+            <% patient.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+            <% end %>
+          </ul>
+          <% flash.each do |type, msg| %>
+            <div class="alert alert-info"><%= msg %> </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  
+  <div class="form-group">
+    <%= form.label :upi %>
+    <%= form.text_field :upi, class: 'form-control' %>
+  </div>
+  <div class="form-group">
+    <%= form.label :doctor_id %>
+    <%= form.collection_select :doctor_id, Doctor.where(status: 'active').order(:person_id), :id, :full_name , { include_blank: '-- select doctor -- '}, { class: 'form-control'} %>
+  </div>
+  <% if !patient.persisted?  %>
+    <div class="form-group">
+      <%= form.label :person_id %>
+      <%= form.collection_select :person_id, Person.order(:id), :id, :full_name , { include_blank: '-- select person -- '}, { class: 'form-control'} %>
     </div>
   <% end %>
-
+  
   <div>
-    <%= form.label :upi, style: "display: block" %>
-    <%= form.text_field :upi %>
-  </div>
-
-  <div>
-    <%= form.label :person, style: "display: block" %>
-    <%= form.text_field :person_id %>
-  </div>
-
-  <div>
-    <%= form.label :doctor, style: "display: block" %>
-    <%= form.text_field :doctor %>
-  </div>
-
-  <div>
-    <%= form.submit %>
+    <%= form.submit class: 'btn btn-success mt-3' %>
   </div>
 <% end %>
