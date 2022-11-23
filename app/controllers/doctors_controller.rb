@@ -1,6 +1,6 @@
 class DoctorsController < ApplicationController
   before_action :set_doctor, only: %i[show edit update destroy]
-
+  before_action :set_unassigned_people_and_status
   def index
     @doctors = Doctor.includes(:person).order('person_id DESC')
   end
@@ -28,7 +28,7 @@ class DoctorsController < ApplicationController
                                 npi: doctor_params[:npi],
                                 status: doctor_params[:status]
                               })
-    @doctor.transaction do
+    Doctor.transaction do
       if @doctor.commit
         if old_status != 'active' && @doctor.status_active?
           @doctor.appointments.update_all(status: :ok)
@@ -40,7 +40,7 @@ class DoctorsController < ApplicationController
         render :edit, status: :unprocessable_entity
       end
     end
-  rescue ActiveRecord::RecordInvalid => e
+  rescue ActiveRecord::ActiveRecordError
     redirect_to doctor_url(@doctor), alert: "something's wrong"
   end
 
@@ -61,5 +61,12 @@ class DoctorsController < ApplicationController
 
   def doctor_params
     params.require(:doctor).permit(:npi, :person_id, :status)
+  end
+
+  def set_unassigned_people_and_status
+    @people = Person.joins('LEFT OUTER JOIN doctors ON doctors.person_id = people.id')
+                    .where('doctors.person_id IS null')
+                    .order(:id)
+    @statuses = Doctor.statuses.map { |v, k| [v, k.split('_').join(' ')] }
   end
 end
