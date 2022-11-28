@@ -6,12 +6,12 @@
   </div>
   <div class="col-md-6">
     <%= button_to 'Remove', doctor_path(@doctor), method: 'delete', class: 'dropdown-item', class: 'btn btn-danger float-end m-1' %>
-    <%= link_to "Edit this doctor", edit_doctor_path(@doctor), class: 'btn btn-success float-end m-1' %> 
+    <%= link_to "Edit this doctor", edit_doctor_path(@doctor), class: 'btn btn-success float-end m-1' %>
   </div>
 </div>
 <div class="row">
   <div class="col-md-12">
-    <% if @doctor.status_leaved? %>
+    <% if @doctor.status_on_leave? %>
       <p style="color: red;text-align:center" >This doctor left.</p>
     <% end %>
     <% if @doctor.status_retired? %>

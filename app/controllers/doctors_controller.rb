@@ -1,6 +1,6 @@
 class DoctorsController < ApplicationController
   before_action :set_doctor, only: %i[show edit update destroy]
-
+  before_action :set_unassigned_people_and_status
   def index
     @doctors = Doctor.includes(:person).order('person_id DESC')
   end
@@ -23,16 +23,27 @@ class DoctorsController < ApplicationController
   def edit; end
 
   def update
+    old_status = @doctor.status
     @doctor.assign_attributes({
                                 npi: doctor_params[:npi],
+                                person_id: doctor_params[:person_id],
                                 status: doctor_params[:status]
                               })
-    if @doctor.commit
-      @doctor.appointments.update_all(status: :error)
-      redirect_to doctor_url(@doctor), notice: 'Doctor was successfully updated.'
+    if @doctor.valid?
+      Doctor.transaction do
+        @doctor.commit
+        if old_status != 'active' && @doctor.status_active?
+          @doctor.appointments.update_all(status: :ok)
+        elsif old_status == 'active' && @doctor.status_active? == false
+          @doctor.appointments.update_all(status: :error)
+        end
+        redirect_to doctor_url(@doctor), notice: 'Doctor was successfully updated.'
+      end
     else
       render :edit, status: :unprocessable_entity
     end
+  rescue ActiveRecord::StatementInvalid => e
+    redirect_to edit_doctor_url(@doctor), alert: "something's wrong"
   end
 
   def destroy
@@ -52,5 +63,12 @@ class DoctorsController < ApplicationController
 
   def doctor_params
     params.require(:doctor).permit(:npi, :person_id, :status)
+  end
+
+  def set_unassigned_people_and_status
+    @people = Person.joins('LEFT OUTER JOIN doctors ON doctors.person_id = people.id')
+                    .where("doctors.person_id IS null or doctors.person_id = #{@doctor.try(:person_id) || 'null'}")
+                    .order(:id)
+    @statuses = Doctor.statuses.map { |v, k| [v, k.split('_').join(' ')] }
   end
 end
