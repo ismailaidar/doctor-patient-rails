@@ -31,7 +31,7 @@ describe DoctorsController do
           status: 302,
           db: {
             Person => [{ id: -1 }, { id: -2 }],
-            Doctor => [{ person_id: -1, npi: '1234567890' }]
+            Doctor => [{ person_id: -1, npi: '1234567890', status: 'active' }]
           }
         }
       },
@@ -54,32 +54,32 @@ describe DoctorsController do
     '#update' => {
       'successfully updates a doctor record' => {
         request: [:put, :doctor_path, { id: -1 }],
-        params: { doctor: { npi: '1234567890', person_id: -1 } },
+        params: { doctor: { npi: '1234567890', person_id: -1, status: 'active' } },
         db: {
           person: [{ id: -1 }, { id: -2 }],
-          doctor: [{ person_id: -1, npi: '1234567890' }]
+          doctor: [{ person_id: -1, npi: '1234567890', status: 'active' }]
         },
         expect: {
           status: 302,
           db: {
             Person => [{ id: -1 }, { id: -2 }],
-            Doctor => [{ person_id: -1, npi: '1234567890' }]
+            Doctor => [{ person_id: -1, npi: '1234567890', status: 'active' }]
           }
         }
       },
       'does not update a doctor record' => {
         request: [:put, :doctor_path, { id: -1 }],
-        params: { doctor: { npi: '123456789', person_id: -1 } },
+        params: { doctor: { npi: '123456789', person_id: -1, status: 'active' } },
         db: {
           person: [{ id: -1 }, { id: -2 }],
-          doctor: [{ person_id: -1, npi: '1234567890' }]
+          doctor: [{ person_id: -1, npi: '1234567890', status: 'active' }]
         },
         expect: {
           status: 422,
-          raise_error: ActiveRecord::RecordInvalid,
+          raise_error: ActiveRecord::ActiveRecordError,
           db: {
             Person => [{ id: -1 }, { id: -2 }],
-            Doctor => [{ person_id: -1, npi: '1234567890' }]
+            Doctor => [{ person_id: -1, npi: '1234567890', status: 'active' }]
           }
         }
       }
@@ -89,7 +89,7 @@ describe DoctorsController do
         request: [:delete, :doctor_path, { id: -1 }],
         db: {
           person: [{ id: -1 }, { id: -2 }],
-          doctor: [{ person_id: -1, npi: '1234567890' }]
+          doctor: [{ person_id: -1, npi: '1234567890', status: 'active' }]
         },
         expect: {
           status: 302,
@@ -103,7 +103,7 @@ describe DoctorsController do
         request: [:delete, :doctor_path, { id: -1 }],
         db: {
           person: [{ id: -1 }, { id: -2 }],
-          doctor: [{ person_id: -1, npi: '1234567890' }],
+          doctor: [{ person_id: -1, npi: '1234567890', status: 'active' }],
           patient: [{ person_id: -2, upi: '1234567890azertyui', doctor_id: -1 }],
           appointment: [{ doctor_id: -1, patient_id: -2, timerange: '[2022-11-11T09:32, 2022-11-11T10:32)' }]
         },
