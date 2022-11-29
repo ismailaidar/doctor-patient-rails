@@ -16,7 +16,7 @@
         <td><%= doctor.npi %></td>
         <td><%= doctor.person.first_name %></td>
         <td><%= doctor.person.last_name %></td>
-        <td><%= doctor.status %></td>
+        <td><%= doctor.get_status %></td>
         <td>
           <%= link_to 'Show', doctor, class: 'dropdown-item', class: 'btn btn-primary' %>
         </td>
