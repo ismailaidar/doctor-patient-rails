@@ -21,15 +21,20 @@
   </div>
   <div class="form-group">
     <%= form.label :doctor_id %>
-    <%= form.collection_select :doctor_id, Doctor.where(status: 'active').order(:person_id), :id, :full_name , { include_blank: '-- select doctor -- '}, { class: 'form-control'} %>
+    <%= form.collection_select :doctor_id, @doctors,
+        :person_id, :full_name_status_str ,
+        { :selected => @patient.doctor_id, 
+          include_blank: '-- select doctor -- ',
+          disabled: @disabled_doctors },
+        { class: 'form-control'} %>
   </div>
-  <% if !patient.persisted?  %>
-    <div class="form-group">
-      <%= form.label :person_id %>
-      <%= form.collection_select :person_id, Person.order(:id), :id, :full_name , { include_blank: '-- select person -- '}, { class: 'form-control'} %>
-    </div>
-  <% end %>
-  
+  <div class="form-group">
+    <%= form.label :person_id %>
+    <%= form.collection_select :person_id,
+        @people, :id, :full_name ,
+        { :selected => @patient.person_id,  include_blank: '-- select person -- ' },
+        { class: 'form-control'} %>
+  </div>
   <div>
     <%= form.submit class: 'btn btn-success mt-3' %>
   </div>

@@ -1,6 +1,6 @@
 class PatientsController < ApplicationController
   before_action :set_patient, only: %i[show edit update destroy]
-
+  before_action :set_unassigned_people
   # GET /patients
   def index
     @patients = Patient.includes(:person, :doctor).order('person_id DESC')
@@ -12,6 +12,7 @@ class PatientsController < ApplicationController
   # GET /patients/new
   def new
     @patient = Patient.new
+    @doctors = Doctor.where(status: 'active').order(:person_id)
   end
 
   # GET /patients/1/edit
@@ -24,6 +25,7 @@ class PatientsController < ApplicationController
     if @patient.commit
       redirect_to @patient, notice: 'Patient was successfully created.'
     else
+      @doctors = @doctors.where(status: 'active').order(:person_id)
       render :new, status: :unprocessable_entity
     end
   end
@@ -57,5 +59,13 @@ class PatientsController < ApplicationController
   # Only allow a list of trusted parameters through.
   def patient_params
     params.require(:patient).permit(:upi, :person_id, :doctor_id)
+  end
+
+  def set_unassigned_people
+    @people = Person.joins('LEFT OUTER JOIN patients ON patients.person_id = people.id')
+                    .where("patients.person_id IS null or patients.person_id = #{@patient.try(:person_id) || 'null'}")
+                    .order(:id)
+    @doctors = Doctor.order(:person_id)
+    @disabled_doctors = @doctors.select { |d| d.get_status != 'active' }.map(&:person_id)
   end
 end
