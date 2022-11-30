@@ -68,6 +68,6 @@ class DoctorsController < ApplicationController
     @people = Person.joins('LEFT OUTER JOIN doctors ON doctors.person_id = people.id')
                     .where('doctors.person_id IS null or doctors.person_id = ? ', @doctor&.person_id)
                     .order(:id)
-    @statuses = Doctor.statuses.map { |v, k| [v, k.split('_').join(' ')] }
+    @statuses = Doctor.statuses.map { |v, k| [v, k.humanize] }
   end
 end

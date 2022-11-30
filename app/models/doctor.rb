@@ -13,12 +13,4 @@ class Doctor < ApplicationRecord
     errors.add(:status, 'You must choose a valid status') unless %w[active on_leave
                                                                     retired].include?(status)
   end
-
-  def full_name_status_str
-    "#{person.full_name} #{get_status unless status_active?}"
-  end
-
-  def get_status
-    status.split('_').join(' ')
-  end
 end
