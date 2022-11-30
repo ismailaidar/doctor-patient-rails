@@ -23,7 +23,6 @@ class DoctorsController < ApplicationController
   def edit; end
 
   def update
-    old_status = @doctor.status
     @doctor.assign_attributes({
                                 npi: doctor_params[:npi],
                                 person_id: doctor_params[:person_id],
@@ -32,9 +31,9 @@ class DoctorsController < ApplicationController
     if @doctor.valid?
       Doctor.transaction do
         @doctor.commit
-        if old_status != 'active' && @doctor.status_active?
+        if @doctor.status_was != 'active' && @doctor.status_active?
           @doctor.appointments.update_all(status: :ok)
-        elsif old_status == 'active' && @doctor.status_active? == false
+        elsif @doctor.status_before_last_save == 'active' && !@doctor.status_active?
           @doctor.appointments.update_all(status: :error)
         end
         redirect_to doctor_url(@doctor), notice: 'Doctor was successfully updated.'
