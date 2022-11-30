@@ -1,4 +1,7 @@
 <% flash.each do |type, msg| %>
-  <div <% if type == "notice" %>style="color: green" <% else %> style="color: red" <% end %> > 
-  <%= msg %></div>
+  <% if type == "notice" %>
+    <%= content_tag(:div, msg,class: "alert alert-success", role: "alert") %>
+  <% else %>
+    <%= content_tag(:div, msg,class: "alert alert-danger", role: "alert") %>
+  <% end %>
 <% end %>
