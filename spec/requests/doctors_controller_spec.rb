@@ -110,7 +110,9 @@ describe DoctorsController do
           status: 302,
           db: {
             Person => [{ id: -1 }, { id: -2 }],
-            Doctor => [{ person_id: -1, npi: '1234567890' }]
+            Doctor => [{ person_id: -1 }],
+            Patient => [{ person_id: -2 }],
+            Appointment => [{ doctor_id: -1, patient_id: -2 }]
           }
         }
       }
