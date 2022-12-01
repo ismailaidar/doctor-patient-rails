@@ -1,6 +1,6 @@
 class CreateDoctors < ActiveRecord::Migration[7.0]
   def up
-    create_enum 'enum_status_doctor', %w[active retired on_leave]
+    create_enum 'enum_status_doctor', %w[active no_active]
     create_table :doctors, id: false do |t|
       t.string :npi, null: false, index: { unique: true }
       t.enum :status, default: 'active', null: false, enum_type: 'enum_status_doctor'

@@ -11,11 +11,8 @@
 </div>
 <div class="row">
   <div class="col-md-12">
-    <% if @doctor.status_on_leave? %>
-      <p style="color: red;text-align:center" >This doctor left.</p>
-    <% end %>
-    <% if @doctor.status_retired? %>
-      <p style="color: red;text-align:center" > This doctor is retired. </p>
+    <% if @doctor.status_no_active? %>
+      <p style="color: red;text-align:center" >this doctor is not active.</p>
     <% end %>
   </div>
 </div>
