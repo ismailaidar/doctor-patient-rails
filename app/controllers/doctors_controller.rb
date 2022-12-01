@@ -28,9 +28,8 @@ class DoctorsController < ApplicationController
                                 person_id: doctor_params[:person_id],
                                 status: doctor_params[:status]
                               })
-    if @doctor.valid?
-      Doctor.transaction do
-        @doctor.commit
+    Doctor.transaction do
+      if @doctor.commit
         if @doctor.status_was != 'active' && @doctor.status_active?
           @doctor.appointments.update_all(status: :ok)
         elsif @doctor.status_before_last_save == 'active' && !@doctor.status_active?
@@ -38,11 +37,11 @@ class DoctorsController < ApplicationController
         end
         redirect_to doctor_url(@doctor), notice: 'Doctor was successfully updated.'
       end
-    else
-      render :edit, status: :unprocessable_entity
     end
   rescue ActiveRecord::StatementInvalid => e
-    redirect_to edit_doctor_url(@doctor), alert: "something's wrong"
+    render :edit, status: :unprocessable_entity
+  rescue ActiveRecord::ActiveRecordError
+    redirect_to doctor_url(@doctor), alert: "something's wrong"
   end
 
   def destroy
