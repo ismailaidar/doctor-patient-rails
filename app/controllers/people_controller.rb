@@ -29,10 +29,7 @@ class PeopleController < ApplicationController
 
   # PATCH/PUT /people/1 or /people/1.json
   def update
-    @person.assign_attributes({
-                                first_name: person_params[:first_name],
-                                last_name: person_params[:last_name]
-                              })
+    @person.assign_attributes(person_params)
     if @person.commit
       redirect_to person_url(@person), notice: 'Person was successfully updated.'
     else

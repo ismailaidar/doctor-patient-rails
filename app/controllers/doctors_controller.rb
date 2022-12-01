@@ -23,11 +23,7 @@ class DoctorsController < ApplicationController
   def edit; end
 
   def update
-    @doctor.assign_attributes({
-                                npi: doctor_params[:npi],
-                                person_id: doctor_params[:person_id],
-                                status: doctor_params[:status]
-                              })
+    @doctor.assign_attributes(doctor_params)
     Doctor.transaction do
       if @doctor.commit
         if @doctor.status_was != 'active' && @doctor.status_active?
