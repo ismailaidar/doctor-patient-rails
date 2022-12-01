@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :person do
-    id { -1 }
+    sequence(:id)
     first_name { Faker::Name.first_name }
     last_name { Faker::Name.last_name }
   end
