@@ -76,7 +76,6 @@ describe DoctorsController do
         },
         expect: {
           status: 422,
-          raise_error: ActiveRecord::ActiveRecordError,
           db: {
             Person => [{ id: -1 }, { id: -2 }],
             Doctor => [{ person_id: -1, npi: '1234567890', status: 'active' }]
@@ -109,7 +108,6 @@ describe DoctorsController do
         },
         expect: {
           status: 302,
-          raise_error: ActiveRecord::ActiveRecordError,
           db: {
             Person => [{ id: -1 }, { id: -2 }],
             Doctor => [{ person_id: -1, npi: '1234567890' }]
