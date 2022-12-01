@@ -1,0 +1,19 @@
+<h3>Last doctors</h3>
+<div id="last_doctors">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>NPI</th>
+        <th>FULL NAME</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% last_doctors.each do |doctor| %>
+      <tr>
+        <td><%= doctor.npi %></td>
+        <td> <%= link_to doctor.person.full_name, doctor, class: 'dropdown-item', class: 'link-primary' %> </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
