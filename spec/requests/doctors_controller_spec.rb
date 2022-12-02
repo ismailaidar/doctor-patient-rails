@@ -16,7 +16,10 @@ describe DoctorsController do
           ]
         },
         expect: {
-          status: 200
+          status: 200,
+          html: {
+            ['.container .mt-4 h1', :text] => /Doctors/
+          }
         }
       }
     },
@@ -135,8 +138,9 @@ describe DoctorsController do
             expected = expected_records.map { |el| hash_including(el.with_indifferent_access) }
             expect(ar_class.all.map(&:attributes)).to match_array(expected)
           end
-
+          html = Nokogiri::HTML.parse(response.body)
           spec.dig(:expect, :html)&.each do |(selector, meth), expected_values|
+            debugger
             expect(html.css(selector).map { |el| el.public_send(meth) }).to match(expected_values)
           end
 
