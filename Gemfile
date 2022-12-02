@@ -53,3 +53,9 @@ group :development do
 end
 
 gem 'cssbundling-rails', '~> 1.1'
+
+gem 'importmap-rails', '~> 1.1'
+
+gem 'bootstrap'
+gem 'jquery-rails'
+gem 'sassc-rails'
