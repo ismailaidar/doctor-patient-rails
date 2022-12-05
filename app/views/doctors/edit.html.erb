@@ -5,11 +5,11 @@
     </div>
     <div class="col-md-6">
       <%= link_to "Back to doctors", doctors_path, class: 'btn btn-primary float-end m-1'  %>
-      <%= link_to "Show this doctor", @doctor , class: 'btn btn-success float-end m-1'  %> 
+      <%= link_to "Show this doctor", @doctor , class: 'btn btn-success float-end m-1'  %>
     </div>
   </div>
   <br>
   <div class="row" >
-    <%= render "form", doctor: @doctor, statuses: @statuses  %>
+    <%= render "form", doctor: @doctor, statuses: @statuses, people: @people  %>
   </div>
 </div>

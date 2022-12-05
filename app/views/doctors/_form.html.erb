@@ -21,7 +21,7 @@
   <div class="form-group">
     <%= form.label :person_id %>
     <%= form.collection_select :person_id,
-        @people, :id, :full_name ,
+        people, :id, :full_name ,
         { :selected => doctor.person_id},
         { class: 'form-control'} %>
   </div>
