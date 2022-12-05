@@ -26,7 +26,7 @@ class DoctorsController < ApplicationController
     @doctor.assign_attributes(doctor_params)
     Doctor.transaction do
       if @doctor.commit
-        if @doctor.status_was != 'active' && @doctor.status_active?
+        if @doctor.status_before_last_save != 'active' && @doctor.status_active?
           @doctor.appointments.update_all(status: :ok)
         elsif @doctor.status_before_last_save == 'active' && !@doctor.status_active?
           @doctor.appointments.update_all(status: :error)
