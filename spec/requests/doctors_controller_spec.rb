@@ -18,7 +18,8 @@ describe DoctorsController do
         expect: {
           status: 200,
           html: {
-            ['.container .mt-4 h1', :text] => /Doctors/
+            ['.table tbody td:nth-child(2)', :text] => %w[Alice Bob],
+            ['.table tbody td:nth-child(3)', :text] => %w[Alfalfa Barker]
           }
         }
       }
