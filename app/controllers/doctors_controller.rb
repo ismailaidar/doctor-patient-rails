@@ -34,7 +34,7 @@ class DoctorsController < ApplicationController
         redirect_to doctor_url(@doctor), notice: 'Doctor was successfully updated.'
       end
     end
-  rescue ActiveRecord::StatementInvalid => e
+  rescue ActiveRecord::StatementInvalid
     render :edit, status: :unprocessable_entity
   rescue ActiveRecord::ActiveRecordError
     redirect_to doctor_url(@doctor), alert: "something's wrong"
