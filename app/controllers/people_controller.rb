@@ -3,7 +3,7 @@ class PeopleController < ApplicationController
 
   # GET /people or /people.json
   def index
-    @people = Person.order('id DESC')
+    @people = Person.order(id: :DESC)
   end
 
   # GET /people/1 or /people/1.json

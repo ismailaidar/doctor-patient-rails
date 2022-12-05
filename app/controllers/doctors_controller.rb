@@ -4,7 +4,7 @@ class DoctorsController < ApplicationController
   before_action :set_statuses, only: %i[edit update]
 
   def index
-    @doctors = Doctor.includes(:person).order('person_id DESC')
+    @doctors = Doctor.includes(:person).order(person_id: :DESC)
   end
 
   def show; end
