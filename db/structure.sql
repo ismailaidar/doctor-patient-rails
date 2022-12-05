@@ -39,7 +39,7 @@ CREATE TYPE public.enum_status_appointment AS ENUM (
 
 CREATE TYPE public.enum_status_doctor AS ENUM (
     'active',
-    'no_active'
+    'inactive'
 );
 
 

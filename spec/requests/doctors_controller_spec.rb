@@ -57,7 +57,7 @@ describe DoctorsController do
     '#update' => {
       'successfully updates a doctor record' => {
         request: [:put, :doctor_path, { id: -1 }],
-        params: { doctor: { npi: '1234567891', person_id: -2, status: 'no_active' } },
+        params: { doctor: { npi: '1234567891', person_id: -2, status: 'inactive' } },
         db: {
           person: [{ id: -1 }, { id: -2 }],
           doctor: [{ person_id: -1, npi: '1234567890', status: 'active' }]
@@ -66,7 +66,7 @@ describe DoctorsController do
           status: 302,
           db: {
             Person => [{ id: -1 }, { id: -2 }],
-            Doctor => [{ person_id: -2, npi: '1234567891', status: 'no_active' }]
+            Doctor => [{ person_id: -2, npi: '1234567891', status: 'inactive' }]
           }
         }
       },
