@@ -1,6 +1,5 @@
 class DoctorsController < ApplicationController
   before_action :set_doctor, only: %i[show edit update destroy]
-  before_action :set_unassigned_people_and_status
   def index
     @doctors = Doctor.includes(:person).order('person_id DESC')
   end
@@ -9,6 +8,9 @@ class DoctorsController < ApplicationController
 
   def new
     @doctor = Doctor.new
+    @people = Person.joins('LEFT OUTER JOIN doctors ON doctors.person_id = people.id')
+                    .where('doctors.person_id IS null or doctors.person_id = ? ', @doctor&.person_id)
+                    .order(:id)
   end
 
   def create
@@ -16,11 +18,19 @@ class DoctorsController < ApplicationController
     if @doctor.commit
       redirect_to doctor_url(@doctor), notice: 'Doctor was successfully created.'
     else
+      @people = Person.joins('LEFT OUTER JOIN doctors ON doctors.person_id = people.id')
+                      .where('doctors.person_id IS null or doctors.person_id = ? ', @doctor&.person_id)
+                      .order(:id)
       render :new, status: :unprocessable_entity
     end
   end
 
-  def edit; end
+  def edit
+    @people = Person.joins('LEFT OUTER JOIN doctors ON doctors.person_id = people.id')
+                    .where('doctors.person_id IS null or doctors.person_id = ? ', @doctor&.person_id)
+                    .order(:id)
+    @statuses = Doctor.statuses
+  end
 
   def update
     @doctor.assign_attributes(doctor_params)
@@ -35,6 +45,10 @@ class DoctorsController < ApplicationController
       end
     end
   rescue ActiveRecord::StatementInvalid
+    @people = Person.joins('LEFT OUTER JOIN doctors ON doctors.person_id = people.id')
+                    .where('doctors.person_id IS null or doctors.person_id = ? ', @doctor&.person_id)
+                    .order(:id)
+    @statuses = Doctor.statuses
     render :edit, status: :unprocessable_entity
   rescue ActiveRecord::ActiveRecordError
     redirect_to doctor_url(@doctor), alert: "something's wrong"
@@ -61,10 +75,4 @@ class DoctorsController < ApplicationController
     params.require(:doctor).permit(:npi, :person_id, :status)
   end
 
-  def set_unassigned_people_and_status
-    @people = Person.joins('LEFT OUTER JOIN doctors ON doctors.person_id = people.id')
-                    .where('doctors.person_id IS null or doctors.person_id = ? ', @doctor&.person_id)
-                    .order(:id)
-    @statuses = Doctor.statuses
-  end
 end
