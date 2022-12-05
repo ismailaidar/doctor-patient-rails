@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :patient do
-    upi { '1234567890azertyui' }
-    person_id { -2 }
+    upi { Faker::Alphanumeric.alphanumeric(number: 18) }
+    :person
   end
 end
