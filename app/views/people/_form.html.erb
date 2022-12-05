@@ -1,13 +1,13 @@
 <%= form_with(model: person) do |form| %>
   <% if person.errors.any? %>
     <div class="alert alert-danger" role="alert">
-      <div style="color: red">
+      <div style="text-danger">
         <h3><%= pluralize(person.errors.count, "error") %> prohibited this person from being saved:</h3>
-          <ul>
-            <% person.errors.each do |error| %>
-              <li><%= error.full_message %></li>
-            <% end %>
-          </ul>
+        <ul>
+          <% person.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
       </div>
     </div>
   <% end %>
