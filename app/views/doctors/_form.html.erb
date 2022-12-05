@@ -25,7 +25,7 @@
         { :selected => doctor.person_id},
         { class: 'form-control'} %>
   </div>
-  <% if doctor.persisted? == true %>
+  <% if doctor.persisted? %>
     <div class="form-group">
       <%= form.label :status %>
       <%= form.select :status, options_for_select(statuses, doctor.status ), {}, { class: "form-control"}  %>
