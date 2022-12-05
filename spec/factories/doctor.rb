@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :doctor do
-    npi { '1234567891' }
-    person_id { -1 }
+    npi { Faker::Number.leading_zero_number(digits: 10) }
+    :person
     status { 'active' }
   end
 end
