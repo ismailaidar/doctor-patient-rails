@@ -10,14 +10,14 @@
     </thead>
     <tbody>
       <% @people.each do |person| %>
-      <tr>
-        <td><%= person.id %></td>
-        <td><%= person.first_name %></td>
-        <td><%= person.last_name %></td>
-        <td>
-          <%= link_to 'Show', person, class: 'dropdown-item', class: 'btn btn-primary' %>
-        </td>
-      </tr>
+        <tr>
+          <td><%= person.id %></td>
+          <td><%= person.first_name %></td>
+          <td><%= person.last_name %></td>
+          <td>
+            <%= link_to 'Show', person, class: 'dropdown-item', class: 'btn btn-primary' %>
+          </td>
+        </tr>
       <% end %>
     </tbody>
   </table>
