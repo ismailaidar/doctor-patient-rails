@@ -28,7 +28,7 @@
   <% if doctor.persisted? == true %>
     <div class="form-group">
       <%= form.label :status %>
-      <%= form.select :status, options_for_select(@statuses, @doctor.status ), {}, { class: "form-control"}  %>
+      <%= form.select :status, options_for_select(statuses, doctor.status ), {}, { class: "form-control"}  %>
     </div>
   <% end %>
   <div>
