@@ -52,7 +52,9 @@ class DoctorsController < ApplicationController
   private
 
   def set_doctor
-    @doctor = Doctor.includes(:person).find_by_person_id(params[:id])
+    @doctor = Doctor.includes(:person).find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to doctors_url, alert: 'Doctor not found'
   end
 
   def doctor_params

@@ -140,7 +140,6 @@ describe DoctorsController do
           end
           html = Nokogiri::HTML.parse(response.body)
           spec.dig(:expect, :html)&.each do |(selector, meth), expected_values|
-            debugger
             expect(html.css(selector).map { |el| el.public_send(meth) }).to match(expected_values)
           end
 
