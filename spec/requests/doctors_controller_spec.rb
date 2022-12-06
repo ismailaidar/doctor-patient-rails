@@ -16,7 +16,11 @@ describe DoctorsController do
           ]
         },
         expect: {
-          status: 200
+          status: 200,
+          html: {
+            ['.table tbody td:nth-child(2)', :text] => %w[Alice Bob],
+            ['.table tbody td:nth-child(3)', :text] => %w[Alfalfa Barker]
+          }
         }
       }
     },
@@ -54,7 +58,7 @@ describe DoctorsController do
     '#update' => {
       'successfully updates a doctor record' => {
         request: [:put, :doctor_path, { id: -1 }],
-        params: { doctor: { npi: '1234567890', person_id: -1, status: 'active' } },
+        params: { doctor: { npi: '1234567891', person_id: -2, status: 'inactive' } },
         db: {
           person: [{ id: -1 }, { id: -2 }],
           doctor: [{ person_id: -1, npi: '1234567890', status: 'active' }]
@@ -63,7 +67,7 @@ describe DoctorsController do
           status: 302,
           db: {
             Person => [{ id: -1 }, { id: -2 }],
-            Doctor => [{ person_id: -1, npi: '1234567890', status: 'active' }]
+            Doctor => [{ person_id: -2, npi: '1234567891', status: 'inactive' }]
           }
         }
       },
@@ -76,7 +80,6 @@ describe DoctorsController do
         },
         expect: {
           status: 422,
-          raise_error: ActiveRecord::ActiveRecordError,
           db: {
             Person => [{ id: -1 }, { id: -2 }],
             Doctor => [{ person_id: -1, npi: '1234567890', status: 'active' }]
@@ -109,10 +112,11 @@ describe DoctorsController do
         },
         expect: {
           status: 302,
-          raise_error: ActiveRecord::ActiveRecordError,
           db: {
             Person => [{ id: -1 }, { id: -2 }],
-            Doctor => [{ person_id: -1, npi: '1234567890' }]
+            Doctor => [{ person_id: -1 }],
+            Patient => [{ person_id: -2 }],
+            Appointment => [{ doctor_id: -1, patient_id: -2 }]
           }
         }
       }
@@ -135,7 +139,7 @@ describe DoctorsController do
             expected = expected_records.map { |el| hash_including(el.with_indifferent_access) }
             expect(ar_class.all.map(&:attributes)).to match_array(expected)
           end
-
+          html = Nokogiri::HTML.parse(response.body)
           spec.dig(:expect, :html)&.each do |(selector, meth), expected_values|
             expect(html.css(selector).map { |el| el.public_send(meth) }).to match(expected_values)
           end

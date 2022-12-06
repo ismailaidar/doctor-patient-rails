@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg bg-light">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">SHA</a>
+  <div class="container">
+    <%= link_to 'SHA', root_path, class: 'navbar-brand' %>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -9,7 +9,7 @@
         <li class="nav-item">
           <%= link_to 'People', people_path, class: 'nav-link' %>
         </li>
-         <li class="nav-item">
+        <li class="nav-item">
           <%= link_to 'Doctors', doctors_path, class: 'nav-link' %>
         </li>
         <li class="nav-item">

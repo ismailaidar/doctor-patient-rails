@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :patient do
-    upi { '1234567890azertyui' }
-    person_id { -2 }
+    sequence(:upi) { |n| '%018x' % n }
+    person
   end
 end

@@ -3,26 +3,24 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>ID</th>
         <th>NPI</th>
         <th>FIRST NAME</th>
         <th>LAST NAME</th>
         <th>STATUS</th>
-        <th >SHOW</th>
+        <th>SHOW</th>
       </tr>
     </thead>
     <tbody>
       <% @doctors.each do |doctor| %>
-      <tr>
-        <td><%= doctor.id %></td>
-        <td><%= doctor.npi %></td>
-        <td><%= doctor.person.first_name %></td>
-        <td><%= doctor.person.last_name %></td>
-        <td><%= doctor.status %></td>
-        <td>
-          <%= link_to 'Show', doctor, class: 'dropdown-item', class: 'btn btn-primary' %>
-        </td>
-      </tr>
+        <tr>
+          <td><%= doctor.npi %></td>
+          <td><%= doctor.person.first_name %></td>
+          <td><%= doctor.person.last_name %></td>
+          <td><%= doctor.status.humanize %></td>
+          <td>
+            <%= link_to 'Show', doctor, class: 'dropdown-item', class: 'btn btn-primary' %>
+          </td>
+        </tr>
       <% end %>
     </tbody>
   </table>

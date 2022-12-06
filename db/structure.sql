@@ -39,8 +39,7 @@ CREATE TYPE public.enum_status_appointment AS ENUM (
 
 CREATE TYPE public.enum_status_doctor AS ENUM (
     'active',
-    'retired',
-    'on_leave'
+    'inactive'
 );
 
 
@@ -135,7 +134,7 @@ ALTER SEQUENCE public.doctors_person_id_seq OWNED BY public.doctors.person_id;
 CREATE TABLE public.patients (
     upi character varying NOT NULL,
     person_id bigint NOT NULL,
-    doctor_id bigint NOT NULL,
+    doctor_id bigint,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     CONSTRAINT check_if_dr_and_person_are_different CHECK ((doctor_id <> person_id)),
@@ -172,8 +171,8 @@ CREATE TABLE public.people (
     last_name character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    CONSTRAINT first_name_check CHECK (((first_name)::text <> ''::text)),
-    CONSTRAINT last_name_check CHECK (((last_name)::text <> ''::text))
+    CONSTRAINT chk_rails_31783067c0 CHECK (((first_name)::text ~ '\S+'::text)),
+    CONSTRAINT chk_rails_7b96a4967c CHECK (((last_name)::text ~ '\S+'::text))
 );
 
 

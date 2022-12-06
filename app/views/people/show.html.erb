@@ -1,10 +1,9 @@
 <div class="row">
   <div class="col-md-6">
     <h1>Person Detail</h1>
-    <label for="">First name</label>
-    <h4><%= @person.first_name %></h4>
-    <label for="">Last name</label>
-    <h4><%= @person.last_name %></h4>
+    <hr>
+    <h4>First name: <span class="fw-lighter"> <%= @person.first_name %> </span></h4>
+    <h4>Last name: <span class="fw-lighter"> <%= @person.last_name %> </span></h4>
   </div>
   <div class="col-md-6">
     <%= button_to 'Remove', person_path(@person), method: 'delete', class: 'dropdown-item', class: 'btn btn-danger float-end m-1' %>

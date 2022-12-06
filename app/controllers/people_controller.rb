@@ -3,7 +3,7 @@ class PeopleController < ApplicationController
 
   # GET /people or /people.json
   def index
-    @people = Person.order('id DESC')
+    @people = Person.order(id: :DESC)
   end
 
   # GET /people/1 or /people/1.json
@@ -29,10 +29,7 @@ class PeopleController < ApplicationController
 
   # PATCH/PUT /people/1 or /people/1.json
   def update
-    @person.assign_attributes({
-                                first_name: person_params[:first_name],
-                                last_name: person_params[:last_name]
-                              })
+    @person.assign_attributes(person_params)
     if @person.commit
       redirect_to person_url(@person), notice: 'Person was successfully updated.'
     else
@@ -46,7 +43,7 @@ class PeopleController < ApplicationController
     redirect_to people_url, notice: 'Person was successfully destroyed.'
   rescue ActiveRecord::InvalidForeignKey
     redirect_to person_url(@person), alert: 'The person has a patient or doctor associated with it.'
-  rescue ActiveRecord::ActSiveRecordError
+  rescue ActiveRecord::ActiveRecordError
     redirect_to person_url(@person), alert: "something's wrong"
   end
 
@@ -55,6 +52,8 @@ class PeopleController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_person
     @person = Person.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to people_url, alert: 'Person not found'
   end
 
   # Only allow a list of trusted parameters through.

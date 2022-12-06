@@ -1,27 +1,10 @@
 class Doctor < ApplicationRecord
   belongs_to :person
   has_many :appointments
+  self.primary_key = 'person_id'
   enum :status, {
-    active: 'active', on_leave: 'on_leave', retired: 'retired'
+    active: 'active', inactive: 'inactive'
   }, default: 'active', prefix: true
-  validates :person, uniqueness: true, presence: true
   validates :npi, presence: true, length: { is: 10 }, format: { with: /\A[0-9]+\z/, message: 'only allows numbers' },
                   uniqueness: true
-  validate :check_status
-
-  def full_name
-    person.full_name
-  end
-
-  def check_status
-    errors.add(:status, 'You must choose a valid status') unless %w[active on_leave retired].include?(status)
-  end
-
-  def full_name_status_str
-    "#{person.full_name} #{get_status unless status_active?}"
-  end
-
-  def get_status
-    status.split('_').join(' ')
-  end
 end

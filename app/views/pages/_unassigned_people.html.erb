@@ -1,0 +1,19 @@
+<h3>Unassigned people</h3>
+<div id="unassigned_people">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>IDS</th>
+        <th>FULL NAME</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% unassigned_people.each do |person| %>
+        <tr>
+          <td><%= person.id %></td>
+          <td> <%= link_to person.full_name, person, class: 'dropdown-item', class: 'link-primary' %> </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

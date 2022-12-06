@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :doctor do
-    npi { '1234567891' }
-    person_id { -1 }
+    sequence(:npi) { |n| '%010d' % n }
+    person
     status { 'active' }
   end
 end
