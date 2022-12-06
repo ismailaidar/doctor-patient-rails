@@ -11,8 +11,8 @@
     <%= javascript_importmap_tags %>
   </head>
   <body>
+    <%= render 'partials/navbar' %>
     <div class="container">
-      <%= render 'partials/navbar' %>
       <div class="mt-4">
         <%= render 'partials/alert' %>
         <%= yield %>
