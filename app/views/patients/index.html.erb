@@ -8,23 +8,25 @@
         <th>FIRST NAME</th>
         <th>LAST NAME</th>
         <th>PRIMARY CARE</th>
-        <th >SHOW</th>
+        <th>SHOW</th>
       </tr>
     </thead>
     <tbody>
       <% @patients.each do |patient| %>
-      <tr>
-        <td><%= patient.upi %></td>
-        <td><%= patient.person.first_name %></td>
-        <td><%= patient.person.last_name %></td>
-        <td><%= patient&.doctor&.full_name %> 
-          <% if !patient&.doctor&.status_active? %>
-            <span class='text-danger '>(inactive)</span>
-          <% end %> </td>
-        <td>
-          <%= link_to 'Show', patient, class: 'dropdown-item', class: 'btn btn-primary' %>
-        </td>
-      </tr>
+        <tr>
+          <td><%= patient.upi %></td>
+          <td><%= patient.person.first_name %></td>
+          <td><%= patient.person.last_name %></td>
+          <td>
+            <%= patient&.doctor&.full_name %> 
+            <% if !patient&.doctor&.status_active? %>
+              <small class='text-danger'>(inactive)</small>
+            <% end %>
+          </td>
+          <td>
+            <%= link_to 'Show', patient, class: 'dropdown-item', class: 'btn btn-primary' %>
+          </td>
+        </tr>
       <% end %>
     </tbody>
   </table>
