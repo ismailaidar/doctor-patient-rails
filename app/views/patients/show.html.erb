@@ -3,10 +3,12 @@
     <h1>Patient <%= @patient.person.full_name %></h1>
     <h4>UPI: <span class="fw-lighter"><%= @patient.upi %></span></h4>
     <hr>
-    <h4>Priamry care: <span class="fw-lighter"><%= @patient&.doctor.full_name %></span>
-      <% if !@patient&.doctor.status_active? %>
+    <h4>Priamry care: <span class="fw-lighter"><%= @patient&.doctor&.full_name %></span>
+      <% if @patient.doctor.present? && !@patient&.doctor&.status_active? %>
         <span class="text-danger fw-lighter">(this doctor is inactive)</span>
-      <% end %> 
+      <% else %>
+        <span class="text-warning fw-lighter">N/A</span>
+      <% end %>
     </h4>
   </div>
   <div class="col-md-6">

@@ -19,6 +19,7 @@ class Patient < ApplicationRecord
   def check_if_active_doctor
     return unless doctor
 
+    # need to be added to PG
     errors.add(:base, 'this doctor is inactive.') if !doctor.status_active? && doctor_changed?
   end
 end
