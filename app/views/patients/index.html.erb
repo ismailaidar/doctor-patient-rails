@@ -4,7 +4,6 @@
   <table class="table table-striped">
     <thead>
       <tr>
-        <th>ID</th>
         <th>UPI</th>
         <th>FIRST NAME</th>
         <th>LAST NAME</th>
@@ -15,11 +14,13 @@
     <tbody>
       <% @patients.each do |patient| %>
       <tr>
-        <td><%= patient.id %></td>
         <td><%= patient.upi %></td>
         <td><%= patient.person.first_name %></td>
         <td><%= patient.person.last_name %></td>
-        <td><%= patient.doctor.person.full_name %></td>
+        <td><%= patient&.doctor&.full_name %> 
+          <% if !patient&.doctor&.status_active? %>
+            <span class='text-danger '>(inactive)</span>
+          <% end %> </td>
         <td>
           <%= link_to 'Show', patient, class: 'dropdown-item', class: 'btn btn-primary' %>
         </td>
