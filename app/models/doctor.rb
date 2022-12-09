@@ -8,6 +8,6 @@ class Doctor < ApplicationRecord
   validates :npi, presence: true, length: { is: 10 }, format: { with: /\A[0-9]+\z/, message: 'only allows numbers' },
                   uniqueness: true
   scope :active_doctors, lambda { |doctor_ids = []|
-    Doctor.status_active.or(Doctor.where(person_id: doctor_ids)).order(person_id: :desc)
+    Doctor.status_active.includes(:person).or(Doctor.where(person_id: doctor_ids)).order(person_id: :desc)
   }
 end
