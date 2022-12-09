@@ -3,18 +3,18 @@ class PatientsController < ApplicationController
   before_action :set_unassigned_people, only: %i[new create edit update]
 
   def index
-    @patients = Patient.includes(:person, :doctor).order(person_id: :DESC)
+    @patients = Patient.includes(:person, doctor: :person).order(person_id: :DESC)
   end
 
   def show; end
 
   def new
     @patient = Patient.new
-    @doctors = Doctor.where(status: 'active').order(person_id: :DESC)
+    @doctors = Doctor.active_doctors
   end
 
   def edit
-    @doctors = Doctor.order(:person_id)
+    @doctors = Doctor.active_doctors([@patient.doctor_id])
   end
 
   def create
@@ -22,7 +22,7 @@ class PatientsController < ApplicationController
     if @patient.commit
       redirect_to @patient, notice: 'Patient was successfully created.'
     else
-      @doctors = Doctor.where(status: 'active').order(person_id: :DESC)
+      @doctors = Doctor.active_doctors
       render :new, status: :unprocessable_entity
     end
   end
@@ -32,7 +32,7 @@ class PatientsController < ApplicationController
     if @patient.commit
       redirect_to @patient, notice: 'Patient was successfully updated.'
     else
-      @doctors = Doctor.order(:person_id)
+      @doctors = Doctor.active_doctors([@patient.doctor_id])
       render :edit, status: :unprocessable_entity
     end
   end
@@ -49,7 +49,7 @@ class PatientsController < ApplicationController
   private
 
   def set_patient
-    @patient = Patient.includes(:person, :doctor).find(params[:id])
+    @patient = Patient.includes(:person, doctor: :person).find(params[:id])
   rescue ActiveRecord::RecordNotFound
     redirect_to patients_url, alert: 'Patient not found'
   end
