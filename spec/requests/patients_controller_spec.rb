@@ -59,13 +59,59 @@ describe PatientsController do
         }
       }
     },
+    '#show' => {
+      'successfully show a patient record' => {
+        request: [:get, :patient_path, { id: -1 }],
+        db: {
+          person: [
+            { id: -1, first_name: 'Alice', last_name: 'Alfalfa' },
+            { id: -2, first_name: 'Bob',   last_name: 'Barker' }
+          ],
+          doctor: [{ person_id: -2, npi: '1234567891', status: 'active' }],
+          patient: [{ person_id: -1, upi: '1234567890azertyui', doctor_id: -2 }]
+        },
+        expect: {
+          status: 200,
+          db: {
+            Person => [{ id: -1 }, { id: -2 }],
+            Doctor => [{ person_id: -2, npi: '1234567891', status: 'active' }],
+            Patient => [{ person_id: -1, upi: '1234567890azertyui', doctor_id: -2 }]
+          },
+          html: {
+            ['h1[name=patient_full_name]', :text] => ['Patient Alice Alfalfa'],
+            ['span[name=upi]', :text] => ['1234567890azertyui'],
+            ['span[name=doctor_full_name]', :text] => ['Bob Barker']
+          }
+        }
+      },
+      'does not show a patient record' => {
+        request: [:get, :patient_path, { id: -99 }],
+        db: {
+          person: [
+            { id: -1, first_name: 'Alice', last_name: 'Alfalfa' },
+            { id: -2, first_name: 'Bob',   last_name: 'Barker' }
+          ],
+          doctor: [{ person_id: -2, npi: '1234567891', status: 'active' }],
+          patient: [{ person_id: -1, upi: '1234567890azertyui', doctor_id: -2 }]
+        },
+        expect: {
+          status: 302,
+          db: {
+            Person => [{ id: -1 }, { id: -2 }],
+            Doctor => [{ person_id: -2, npi: '1234567891', status: 'active' }],
+            Patient => [{ person_id: -1, upi: '1234567890azertyui', doctor_id: -2 }]
+          }
+
+        }
+      }
+    },
     '#update' => {
       'successfully updates a patient record' => {
         request: [:put, :patient_path, { id: -1 }],
         params: { patient: { upi: '1234567890azemmmmm', person_id: -1, doctor_id: -2 } },
         db: {
           person: [{ id: -1 }, { id: -2 }],
-          doctor: [{ person_id: -2, npi: '1234567891' }],
+          doctor: [{ person_id: -2, npi: '1234567891', status: 'active' }],
           patient: [{ person_id: -1, upi: '1234567890azertyui', doctor_id: -2 }]
         },
         expect: {
@@ -133,10 +179,8 @@ describe PatientsController do
     describe action do
       h.each do |desc, spec|
         it desc do
-          # Create necessary records
           spec[:db].each do |type, records|
             records.each do |attrs|
-              # debugger if action == '#create' && type == :doctor
               FactoryBot.create(type, **attrs)
             end
           end
