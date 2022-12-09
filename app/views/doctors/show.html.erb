@@ -1,8 +1,8 @@
 <div class="row">
   <div class="col-md-6">
-    <h1>Doctor <%= @doctor.person.full_name %></h1>
+    <h1 name="full_name">Doctor <%= @doctor.person.full_name %></h1>
     <hr>
-    <h4>NPI: <span class="fw-lighter"> <%= @doctor.npi %> </span></h4>
+    <h4>NPI: <span class="fw-lighter" name="npi"><%= @doctor.npi %></span></h4>
   </div>
   <div class="col-md-6">
     <%= button_to 'Remove', doctor_path(@doctor), method: 'delete', class: 'dropdown-item', class: 'btn btn-danger float-end m-1' %>
