@@ -1,7 +1,7 @@
 <%= form_with(model: patient) do |form| %>
-  <% if patient.errors.any? %>
+  <% if patient.errors.present? %>
     <div class="alert alert-danger" role="alert">
-      <div style="color: red">
+      <div class="text-danger">
         <h3><%= pluralize(patient.errors.count, "error") %>prohibited this patient from being saved:</h3>
         <ul>
           <% patient.errors.each do |error| %>
@@ -19,11 +19,12 @@
     <%= form.text_field :upi, class: 'form-control' %>
   </div>
   <div class="form-group">
-    <%= form.label :doctor_id %>
-    <%= form.collection_select :doctor_id, doctors,
-        :person_id, :full_name ,
-        { :selected => patient.doctor_id },
-        { class: 'form-control'} %>
+    <%= form.label :doctor %>
+    <select class="form-control" name="patient[doctor_id]" id="patient_doctor_id">
+      <%= doctors.each do |doctor| %>
+        <%= content_tag(:option, doctor.person.full_name, value: doctor.person_id) %>
+      <% end %>
+    </select>
   </div>
   <div class="form-group">
     <%= form.label :person_id %>
