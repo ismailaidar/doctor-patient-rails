@@ -1,7 +1,7 @@
 <%= form_with(model: doctor) do |form| %>
   <% if doctor.errors.present? %>
     <div class="alert alert-danger" role="alert">
-      <div style="color: red">
+      <div class="text-danger">
         <h3><%= pluralize(doctor.errors.count, "error") %> prohibited this doctor from being saved:</h3>
         <ul>
           <% doctor.errors.each do |error| %>
