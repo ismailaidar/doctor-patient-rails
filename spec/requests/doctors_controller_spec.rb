@@ -24,6 +24,48 @@ describe DoctorsController do
         }
       }
     },
+    '#show' => {
+      'successfully show a doctor record' => {
+        request: [:get, :doctor_path, { id: -2 }],
+        db: {
+          person: [
+            { id: -1, first_name: 'Alice', last_name: 'Alfalfa' },
+            { id: -2, first_name: 'Bob',   last_name: 'Barker' }
+          ],
+          doctor: [{ person_id: -2, npi: '1234567891', status: 'active' }]
+        },
+        expect: {
+          status: 200,
+          db: {
+            Person => [{ id: -1 }, { id: -2 }],
+            Doctor => [{ person_id: -2, npi: '1234567891', status: 'active' }]
+          },
+          html: {
+            ['span[name=npi]', :text] => ['1234567891'],
+            ['h1[name=full_name]', :text] => ['Doctor Bob Barker']
+          }
+        }
+      },
+      'does not show a doctor record' => {
+        request: [:get, :doctor_path, { id: -99 }],
+        db: {
+          person: [
+            { id: -1, first_name: 'Alice', last_name: 'Alfalfa' },
+            { id: -2, first_name: 'Bob',   last_name: 'Barker' }
+          ],
+          doctor: [{ person_id: -2, npi: '1234567891', status: 'active' }],
+          patient: [{ person_id: -1, upi: '1234567890azertyui', doctor_id: -2 }]
+        },
+        expect: {
+          status: 302,
+          db: {
+            Person => [{ id: -1 }, { id: -2 }],
+            Doctor => [{ person_id: -2, npi: '1234567891', status: 'active' }]
+          }
+
+        }
+      }
+    },
     '#create' => {
       'successfully creates a doctor record' => {
         request: %i[post doctors_path],
