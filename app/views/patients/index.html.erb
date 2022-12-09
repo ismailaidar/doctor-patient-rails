@@ -19,8 +19,8 @@
           <td><%= patient.person.last_name %></td>
           <td>
             <% if patient&.doctor.present? %>
-              <%= patient&.doctor&.full_name %>
-              <% if patient&.doctor&.status_inactive? %>
+              <%= patient.doctor.person.full_name %>
+              <% if patient.doctor.status_inactive? %>
                 <small class='text-danger'>(inactive)</small>
               <% end %>
             <% else %>
