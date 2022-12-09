@@ -30,7 +30,7 @@ describe PatientsController do
         params: { patient: { upi: '1234567890azertyui', person_id: -1, doctor_id: -2 } },
         db: {
           person: [{ id: -1 }, { id: -2 }],
-          doctor: [{ person_id: -2, npi: '1234567891' }]
+          doctor: [{ person_id: -2, npi: '1234567891', status: 'active' }]
         },
         expect: {
           status: 302,
@@ -47,7 +47,7 @@ describe PatientsController do
         params: { patient: { upi: '1234567890azertyu', person_id: -1, doctor_id: -2 } },
         db: {
           person: [{ id: -1 }, { id: -2 }],
-          doctor: [{ person_id: -2, npi: '1234567891' }]
+          doctor: [{ person_id: -2, npi: '1234567891', status: 'active' }]
         },
         expect: {
           status: 422,
