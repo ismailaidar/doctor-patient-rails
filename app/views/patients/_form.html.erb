@@ -21,8 +21,9 @@
   <div class="form-group">
     <%= form.label :doctor %>
     <select class="form-control" name="patient[doctor_id]" id="patient_doctor_id">
+      <option value="" selected>---------</option>
       <%= doctors.each do |doctor| %>
-        <%= content_tag(:option, doctor.person.full_name, value: doctor.person_id) %>
+        <%= content_tag(:option, doctor.person.full_name, value: doctor.person_id, :selected => ("true" if patient.doctor_id) ) %>
       <% end %>
     </select>
   </div>
