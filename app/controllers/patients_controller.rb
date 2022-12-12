@@ -55,7 +55,7 @@ class PatientsController < ApplicationController
   end
 
   def patient_params
-    params[:patient][:upi] = params[:patient][:upi].downcase
+    params[:patient][:upi].downcase!
     params.require(:patient).permit(:upi, :person_id, :doctor_id)
   end
 

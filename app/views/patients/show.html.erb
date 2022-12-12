@@ -4,7 +4,7 @@
     <h4>UPI: <span class="fw-lighter" data-name='upi'><%= @patient.upi %></span></h4>
     <hr>
     <h4>
-      Priamry care:
+      Priamry Care:
       <% if @patient&.doctor.present? %>
         <span class="fw-lighter" data-name="doctor_full_name" ><%= @patient.doctor.person.full_name %></span>
         <% if @patient.doctor.status_inactive? %>
