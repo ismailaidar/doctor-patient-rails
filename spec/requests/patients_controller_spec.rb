@@ -78,9 +78,9 @@ describe PatientsController do
             Patient => [{ person_id: -1, upi: '1234567890azertyui', doctor_id: -2 }]
           },
           html: {
-            ['h1[name=patient_full_name]', :text] => ['Patient Alice Alfalfa'],
-            ['span[name=upi]', :text] => ['1234567890azertyui'],
-            ['span[name=doctor_full_name]', :text] => ['Bob Barker']
+            ['h1[data-name=patient_full_name]', :text] => ['Patient Alice Alfalfa'],
+            ['span[data-name=upi]', :text] => ['1234567890azertyui'],
+            ['span[data-name=doctor_full_name]', :text] => ['Bob Barker']
           }
         }
       },

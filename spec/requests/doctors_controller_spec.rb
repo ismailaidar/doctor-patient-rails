@@ -41,8 +41,8 @@ describe DoctorsController do
             Doctor => [{ person_id: -2, npi: '1234567891', status: 'active' }]
           },
           html: {
-            ['span[name=npi]', :text] => ['1234567891'],
-            ['h1[name=full_name]', :text] => ['Doctor Bob Barker']
+            ['span[data-name=npi]', :text] => ['1234567891'],
+            ['h1[data-name=full_name]', :text] => ['Doctor Bob Barker']
           }
         }
       },
