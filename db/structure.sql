@@ -171,8 +171,8 @@ CREATE TABLE public.people (
     last_name character varying NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    CONSTRAINT chk_rails_31783067c0 CHECK (((first_name)::text ~ '\S+'::text)),
-    CONSTRAINT chk_rails_7b96a4967c CHECK (((last_name)::text ~ '\S+'::text))
+    CONSTRAINT chk_rails_17659736c4 CHECK (((last_name)::text ~ '\S'::text)),
+    CONSTRAINT chk_rails_1a5fdbc022 CHECK (((first_name)::text ~ '\S'::text))
 );
 
 
@@ -358,7 +358,7 @@ ALTER TABLE ONLY public.doctors
 --
 
 ALTER TABLE ONLY public.appointments
-    ADD CONSTRAINT fk_rails_8db8e1e8a5 FOREIGN KEY (doctor_id) REFERENCES public.doctors(person_id);
+    ADD CONSTRAINT fk_rails_8db8e1e8a5 FOREIGN KEY (doctor_id) REFERENCES public.doctors(person_id) ON DELETE CASCADE;
 
 
 --
@@ -366,7 +366,7 @@ ALTER TABLE ONLY public.appointments
 --
 
 ALTER TABLE ONLY public.patients
-    ADD CONSTRAINT fk_rails_9739853ad1 FOREIGN KEY (doctor_id) REFERENCES public.doctors(person_id);
+    ADD CONSTRAINT fk_rails_9739853ad1 FOREIGN KEY (doctor_id) REFERENCES public.doctors(person_id) ON DELETE SET NULL;
 
 
 --
@@ -374,7 +374,7 @@ ALTER TABLE ONLY public.patients
 --
 
 ALTER TABLE ONLY public.appointments
-    ADD CONSTRAINT fk_rails_c63da04ab4 FOREIGN KEY (patient_id) REFERENCES public.patients(person_id);
+    ADD CONSTRAINT fk_rails_c63da04ab4 FOREIGN KEY (patient_id) REFERENCES public.patients(person_id) ON DELETE CASCADE;
 
 
 --

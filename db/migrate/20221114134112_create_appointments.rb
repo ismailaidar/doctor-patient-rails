@@ -2,8 +2,8 @@ class CreateAppointments < ActiveRecord::Migration[7.0]
   def up
     create_enum 'enum_status_appointment', %w[ok error]
     create_table :appointments do |t|
-      t.references :patient, null: false, foreign_key: { primary_key: :person_id }
-      t.references :doctor, null: false, foreign_key: { primary_key: :person_id }
+      t.references :patient, null: false, foreign_key: { primary_key: :person_id, on_delete: :cascade }
+      t.references :doctor, null: false, foreign_key: { primary_key: :person_id, on_delete: :cascade }
       t.enum :status, default: 'ok', null: false, enum_type: 'enum_status_appointment'
       t.tstzrange :timerange, null: false
       t.check_constraint 'doctor_id <> patient_id', name: 'check_if_dr_and_patient_are_different'

@@ -144,8 +144,26 @@ describe DoctorsController do
           }
         }
       },
+      "successfully deletes a doctor record and it's related appointments" => {
+        request: [:delete, :doctor_path, { id: -2 }],
+        db: {
+          person: [{ id: -1 }, { id: -2 }],
+          doctor: [{ person_id: -2, npi: '1234567890', status: 'active' }],
+          patient: [{ person_id: -1, upi: '1234567890azertyui', doctor_id: -2 }],
+          appointment: [{ doctor_id: -2, patient_id: -1, timerange: '[2022-11-11T09:32, 2022-11-11T10:32)' }]
+        },
+        expect: {
+          status: 302,
+          db: {
+            Person => [{ id: -1 }, { id: -2 }],
+            Doctor => [],
+            Patient => [{ person_id: -1 }],
+            Appointment => []
+          }
+        }
+      },
       'does not delete a doctor record' => {
-        request: [:delete, :doctor_path, { id: -1 }],
+        request: [:delete, :doctor_path, { id: -9 }],
         db: {
           person: [{ id: -1 }, { id: -2 }],
           doctor: [{ person_id: -1, npi: '1234567890', status: 'active' }],
