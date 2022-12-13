@@ -38,7 +38,7 @@ class PatientsController < ApplicationController
   end
 
   def destroy
-    @patient.destroy
+    @patient.delete
     redirect_to patients_url, notice: 'Patient was successfully destroyed.'
   rescue ActiveRecord::InvalidForeignKey
     redirect_to patient_url(@patient), alert: 'This Patient has appointments associated with it.'

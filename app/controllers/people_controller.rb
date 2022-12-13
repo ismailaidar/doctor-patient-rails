@@ -39,7 +39,7 @@ class PeopleController < ApplicationController
 
   # DELETE /people/1 or /people/1.json
   def destroy
-    @person.destroy
+    @person.delete
     redirect_to people_url, notice: 'Person was successfully destroyed.'
   rescue ActiveRecord::InvalidForeignKey
     redirect_to person_url(@person), alert: 'The person has a patient or doctor associated with it.'
