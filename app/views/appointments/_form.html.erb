@@ -1,0 +1,44 @@
+<%= form_with(model: appointment) do |form| %>
+  <% if appointment.errors.present? %>
+    <div class="alert alert-danger" role="alert">
+      <div class="text-danger">
+        <h3><%= pluralize(appointment.errors.count, "error") %> prohibited this appointment from being saved:</h3>
+        <ul>
+          <% appointment.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+        <% flash.each do |type, msg| %>
+          <div class="alert alert-info"><%= msg %> </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+  <div class="form-group">
+    <%= form.label :start %>
+    <%= form.datetime_field :start_date, class: 'form-control' %>
+    <%= form.label :end %>
+    <%= form.datetime_field :end_date, class: 'form-control' %>
+  </div>
+  <div class="form-group">
+    <%= form.label :doctor %>
+    <select class="form-control" name="appointment[doctor_id]" id="patient_doctor_id">
+      <%= content_tag(:option, '---------', value: '') %>
+      <%= doctors.each do |doctor| %>
+        <%= content_tag(:option, doctor.person.full_name, value: doctor.person_id, :selected => ("true" if appointment.doctor_id == doctor.person_id) ) %>
+      <% end %>
+    </select>
+  </div>
+  <div class="form-group">
+    <%= form.label :patient %>
+    <select class="form-control" name="appointment[patient_id]" id="patient_patient_id">
+      <%= content_tag(:option, '---------', value: '') %>
+      <%= patients.each do |patient| %>
+        <%= content_tag(:option, patient.person.full_name, value: patient.person_id, :selected => ("true" if appointment.patient_id == patient.person_id) ) %>
+      <% end %>
+    </select>
+  </div>
+  <div>
+    <%= form.submit class: 'btn btn-success mt-3' %>
+  </div>
+<% end %>

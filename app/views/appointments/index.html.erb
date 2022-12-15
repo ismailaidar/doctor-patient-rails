@@ -1,0 +1,28 @@
+<h1>Appointment</h1>
+<div id="appointments">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>DOCTOR</th>
+        <th>PATIENT</th>
+        <th>START TIME</th>
+        <th>END TIME</th>
+        <th>SHOW</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @appointments.each do |appointment| %>
+        <tr>
+          <td><%= link_to appointment.doctor.person.full_name, appointment.doctor, class: 'link-primary' %></td>
+          <td><%= link_to appointment.patient.person.full_name, appointment.patient, class: 'link-primary' %></td>
+          <td><%= appointment.timerange.first.to_formatted_s(:long) %></td>
+          <td><%= appointment.timerange.last.to_formatted_s(:long) %></td>
+          <td>
+            <%= link_to 'Show', appointment, class: 'dropdown-item', class: 'btn btn-primary' %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<%= link_to "New Appointment", new_appointment_path, class: 'btn btn-primary' %>

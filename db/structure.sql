@@ -59,7 +59,8 @@ CREATE TABLE public.appointments (
     timerange tstzrange NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    CONSTRAINT check_if_dr_and_patient_are_different CHECK ((doctor_id <> patient_id))
+    CONSTRAINT check_if_dr_and_patient_are_different CHECK ((doctor_id <> patient_id)),
+    CONSTRAINT check_if_times_are_different CHECK (lower_inc(timerange))
 );
 
 

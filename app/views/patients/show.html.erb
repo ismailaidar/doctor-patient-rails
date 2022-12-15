@@ -1,9 +1,11 @@
 <div class="row">
   <div class="col-md-6">
-    <h1 data-name='patient_full_name'>Patient <%= @patient.person.full_name %></h1>
-    <h4>UPI: <span class="fw-lighter" data-name='upi'><%= @patient.upi %></span></h4>
+    <h1>Patient Details: </h1>
     <hr>
-    <h4>
+    <h5>UPI: <span class="fw-lighter" data-name='upi'><%= @patient.upi %></span></h5>
+    <h5>First Name: <span class="fw-lighter" data-name='first_name'><%= @patient.person.first_name %></span></h5>
+    <h5>Last Name: <span class="fw-lighter" data-name='last_name'><%= @patient.person.last_name %></span></h5>
+    <h5>
       Primary Care:
       <% if @patient&.doctor.present? %>
         <span class="fw-lighter" data-name="doctor_full_name" ><%= @patient.doctor.person.full_name %></span>
@@ -13,7 +15,7 @@
       <% else %>
         <span class="text-warning fw-lighter">N/A</span>
       <% end %>
-    </h4>
+    </h5>
   </div>
   <div class="col-md-6">
     <%= button_to 'Remove', patient_path(@patient), method: 'delete', class: 'dropdown-item', class: 'btn btn-danger float-end m-1' %>

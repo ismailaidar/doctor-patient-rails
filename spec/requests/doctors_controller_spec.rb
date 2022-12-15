@@ -42,7 +42,8 @@ describe DoctorsController do
           },
           html: {
             ['span[data-name=npi]', :text] => ['1234567891'],
-            ['h1[data-name=full_name]', :text] => ['Doctor Bob Barker']
+            ['span[data-name=first_name]', :text] => ['Bob'],
+            ['span[data-name=last_name]', :text] => ['Barker']
           }
         }
       },
@@ -62,7 +63,6 @@ describe DoctorsController do
             Person => [{ id: -1 }, { id: -2 }],
             Doctor => [{ person_id: -2, npi: '1234567891', status: 'active' }]
           }
-
         }
       }
     },
@@ -150,7 +150,7 @@ describe DoctorsController do
           person: [{ id: -1 }, { id: -2 }],
           doctor: [{ person_id: -2, npi: '1234567890', status: 'active' }],
           patient: [{ person_id: -1, upi: '1234567890azertyui', doctor_id: -2 }],
-          appointment: [{ doctor_id: -2, patient_id: -1, timerange: '[2022-11-11T09:32, 2022-11-11T10:32)' }]
+          appointment: [{ doctor_id: -2, patient_id: -1, start_date: '2022-11-11T09:32', end_date: '2022-11-11T10:32' }]
         },
         expect: {
           status: 302,
@@ -168,7 +168,7 @@ describe DoctorsController do
           person: [{ id: -1 }, { id: -2 }],
           doctor: [{ person_id: -1, npi: '1234567890', status: 'active' }],
           patient: [{ person_id: -2, upi: '1234567890azertyui', doctor_id: -1 }],
-          appointment: [{ doctor_id: -1, patient_id: -2, timerange: '[2022-11-11T09:32, 2022-11-11T10:32)' }]
+          appointment: [{ doctor_id: -1, patient_id: -2, start_date: '2022-11-11T09:32', end_date: '2022-11-11T10:32' }]
         },
         expect: {
           status: 302,

@@ -11,7 +11,7 @@
       <% unassigned_people.each do |person| %>
         <tr>
           <td><%= person.id %></td>
-          <td> <%= link_to person.full_name, person, class: 'dropdown-item', class: 'link-primary' %> </td>
+          <td><%= link_to person.full_name, person, class: 'link-primary' %></td>
         </tr>
       <% end %>
     </tbody>

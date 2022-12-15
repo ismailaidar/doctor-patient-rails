@@ -78,7 +78,8 @@ describe PatientsController do
             Patient => [{ person_id: -1, upi: '1234567890azertyui', doctor_id: -2 }]
           },
           html: {
-            ['h1[data-name=patient_full_name]', :text] => ['Patient Alice Alfalfa'],
+            ['span[data-name=first_name]', :text] => ['Alice'],
+            ['span[data-name=last_name]', :text] => ['Alfalfa'],
             ['span[data-name=upi]', :text] => ['1234567890azertyui'],
             ['span[data-name=doctor_full_name]', :text] => ['Bob Barker']
           }
@@ -162,7 +163,7 @@ describe PatientsController do
           person: [{ id: -1 }, { id: -2 }],
           doctor: [{ person_id: -2, npi: '1234567890', status: 'active' }],
           patient: [{ person_id: -1, upi: '1234567890azertyui', doctor_id: -2 }],
-          appointment: [{ doctor_id: -2, patient_id: -1, timerange: '[2022-11-11T09:32, 2022-11-11T10:32)' }]
+          appointment: [{ doctor_id: -2, patient_id: -1, start_date: '2022-11-11T09:32', end_date: '2022-11-11T10:32' }]
         },
         expect: {
           status: 302,
@@ -179,7 +180,7 @@ describe PatientsController do
           person: [{ id: -1 }, { id: -2 }],
           doctor: [{ person_id: -2, npi: '1234567890', status: 'active' }],
           patient: [{ person_id: -1, upi: '1234567890azertyui', doctor_id: -2 }],
-          appointment: [{ doctor_id: -2, patient_id: -1, timerange: '[2022-11-11T09:32, 2022-11-11T10:32)' }]
+          appointment: [{ doctor_id: -2, patient_id: -1, start_date: '2022-11-11T09:32', end_date: '2022-11-11T10:32' }]
         },
         expect: {
           status: 302,

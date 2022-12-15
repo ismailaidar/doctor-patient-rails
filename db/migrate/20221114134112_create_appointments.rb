@@ -7,6 +7,7 @@ class CreateAppointments < ActiveRecord::Migration[7.0]
       t.enum :status, default: 'ok', null: false, enum_type: 'enum_status_appointment'
       t.tstzrange :timerange, null: false
       t.check_constraint 'doctor_id <> patient_id', name: 'check_if_dr_and_patient_are_different'
+      t.check_constraint 'lower_inc(tstzrange(timerange))', name: 'check_if_times_are_different'
 
       t.timestamps
     end

@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :appointment do
+    sequence(:id)
     doctor
     patient
     timerange do
