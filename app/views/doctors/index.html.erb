@@ -17,7 +17,7 @@
           <td><%= doctor.person.first_name %></td>
           <td><%= doctor.person.last_name %></td>
           <td>
-           <%= content_tag(:span, doctor.status.humanize, :class => ("text-danger" if !doctor.status_active?)) %>
+            <%= content_tag(:span, doctor.status.humanize, :class => ("text-danger" if !doctor.status_active?)) %>
           </td>
           <td>
             <%= link_to 'Show', doctor, class: 'dropdown-item', class: 'btn btn-primary' %>

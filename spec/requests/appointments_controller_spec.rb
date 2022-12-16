@@ -200,7 +200,6 @@ describe AppointmentsController do
               FactoryBot.create(type, **attrs)
             end
           end
-          # debugger if action == '#show'
           method, *url_args = spec[:request]
           public_send(method, public_send(*url_args), params: spec[:params])
 
