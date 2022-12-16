@@ -29,15 +29,15 @@
       <% end %>
     </select>
   </div>
-  <div class="form-group">
-    <%= form.label :patient %>
-    <select class="form-control" name="appointment[patient_id]" id="patient_patient_id">
-      <%= content_tag(:option, '---------', value: '') %>
-      <%= patients.each do |patient| %>
-        <%= content_tag(:option, patient.person.full_name, value: patient.person_id, :selected => ("true" if appointment.patient_id == patient.person_id) ) %>
-      <% end %>
-    </select>
-  </div>
+    <div class="form-group">
+      <%= form.label :patient %>
+      <select class="form-control" name="appointment[patient_id]" id="patient_patient_id">
+        <%= content_tag(:option, '---------', value: '') %>
+        <%= patients.each do |patient| %>
+          <%= content_tag(:option, patient.person.full_name, value: patient.person_id, :selected => ("true" if appointment.patient_id == patient.person_id) ) %>
+        <% end %>
+      </select>
+    </div>
   <div>
     <%= form.submit class: 'btn btn-success mt-3' %>
   </div>
