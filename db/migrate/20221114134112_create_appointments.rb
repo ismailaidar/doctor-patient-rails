@@ -7,7 +7,7 @@ class CreateAppointments < ActiveRecord::Migration[7.0]
       t.enum :status, default: 'ok', null: false, enum_type: 'enum_status_appointment'
       t.tstzrange :timerange, null: false
       t.check_constraint 'doctor_id <> patient_id', name: 'check_if_dr_and_patient_are_different'
-      t.check_constraint 'lower_inc(tstzrange(timerange))', name: 'check_if_times_are_different'
+      t.check_constraint 'NOT isempty(timerange)', name: 'check_if_empty'
 
       t.timestamps
     end
@@ -16,9 +16,9 @@ class CreateAppointments < ActiveRecord::Migration[7.0]
 
       ALTER TABLE appointments
       ADD CONSTRAINT timerange_exclude_no_overlap_doctor_id
-      EXCLUDE USING GIST (timerange WITH &&, doctor_id with =),
+      EXCLUDE USING GIST (timerange WITH &&, doctor_id with =) WHERE (status = 'ok'),
       ADD CONSTRAINT timerange_exclude_no_overlap_patient_id
-      EXCLUDE USING GIST (timerange WITH &&, patient_id with =);
+      EXCLUDE USING GIST (timerange WITH &&, patient_id with =) WHERE (status = 'ok');
     SQL
   end
 

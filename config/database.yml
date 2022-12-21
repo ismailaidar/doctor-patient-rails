@@ -8,8 +8,8 @@ default: &default
 
 development:
   <<: *default
-  database: sha_project1
+  database: sha_project
 
 test:
   <<: *default
-  database: sha_project_test1
+  database: sha_project_test

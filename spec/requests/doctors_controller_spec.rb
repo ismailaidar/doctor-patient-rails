@@ -150,7 +150,8 @@ describe DoctorsController do
           person: [{ id: -1 }, { id: -2 }],
           doctor: [{ person_id: -2, npi: '1234567890', status: 'active' }],
           patient: [{ person_id: -1, upi: '1234567890azertyui', doctor_id: -2 }],
-          appointment: [{ doctor_id: -2, patient_id: -1, start_date: '2022-11-11T09:32', end_date: '2022-11-11T10:32' }]
+          appointment: [{ doctor_id: -2, patient_id: -1,
+                          timerange: '2022-05-16 18:43:11 UTC'.to_datetime...'2022-05-16 19:43:11 UTC'.to_datetime }]
         },
         expect: {
           status: 302,
@@ -168,7 +169,8 @@ describe DoctorsController do
           person: [{ id: -1 }, { id: -2 }],
           doctor: [{ person_id: -1, npi: '1234567890', status: 'active' }],
           patient: [{ person_id: -2, upi: '1234567890azertyui', doctor_id: -1 }],
-          appointment: [{ doctor_id: -1, patient_id: -2, start_date: '2022-11-11T09:32', end_date: '2022-11-11T10:32' }]
+          appointment: [{ doctor_id: -1, patient_id: -2, timerange:
+            '2022-05-16 18:43:11 UTC'.to_datetime...'2022-05-16 19:43:11 UTC'.to_datetime }]
         },
         expect: {
           status: 302,

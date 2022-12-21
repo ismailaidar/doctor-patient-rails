@@ -13,8 +13,6 @@ describe AppointmentsController do
           doctor: [{ person_id: -1 }],
           patient: [{ person_id: -2 }],
           appointment: [{ doctor_id: -1, patient_id: -2,
-                          start_date: '2022-05-16 18:43:11 UTC',
-                          end_date: '2022-05-16 19:43:11 UTC',
                           timerange: '2022-05-16 18:43:11 UTC'.to_datetime...'2022-05-16 19:43:11 UTC'.to_datetime }]
         },
         expect: {
@@ -78,8 +76,6 @@ describe AppointmentsController do
           doctor: [{ person_id: -1 }],
           patient: [{ person_id: -2 }],
           appointment: [{ id: -1, doctor_id: -1, patient_id: -2,
-                          start_date: '2022-05-16 18:43:11 UTC',
-                          end_date: '2022-05-16 19:43:11 UTC',
                           timerange: '2022-05-16 18:43:11 UTC'.to_datetime...'2022-05-16 19:43:11 UTC'.to_datetime }]
         },
         expect: {
@@ -122,8 +118,6 @@ describe AppointmentsController do
           doctor: [{ person_id: -1 }],
           patient: [{ person_id: -2 }],
           appointment: [{ id: -1, doctor_id: -1, patient_id: -2,
-                          start_date: '2022-05-16 18:43:11 UTC',
-                          end_date: '2022-05-16 19:43:11 UTC',
                           timerange: '2022-05-16 18:43:11 UTC'.to_datetime...'2022-05-16 19:43:11 UTC'.to_datetime }]
         },
         expect: {
@@ -149,8 +143,6 @@ describe AppointmentsController do
           doctor: [{ person_id: -1 }],
           patient: [{ person_id: -2 }],
           appointment: [{ id: -1, doctor_id: -1, patient_id: -2,
-                          start_date: '2022-05-16 18:43:11 UTC',
-                          end_date: '2022-05-16 19:43:11 UTC',
                           timerange: '2022-05-16 18:43:11 UTC'.to_datetime...'2022-05-16 19:43:11 UTC'.to_datetime }]
         },
         expect: {
@@ -169,7 +161,7 @@ describe AppointmentsController do
       'successfully deletes an appointment record' => {
         request: [:delete, :appointment_path, { id: -1 }],
         db: {
-          appointment: [{ id: -1, start_date: '2022-05-16 18:43:11 UTC', end_date: '2022-05-16 20:43:11 UTC' }]
+          appointment: [{ id: -1 }]
         },
         expect: {
           status: 302,
@@ -181,7 +173,7 @@ describe AppointmentsController do
       'does not delete an appointment record' => {
         request: [:delete, :appointment_path, { id: -9 }],
         db: {
-          appointment: [{ id: -1, start_date: '2022-05-16 18:43:11 UTC', end_date: '2022-05-16 20:43:11 UTC' }]
+          appointment: [{ id: -1 }]
         },
         expect: {
           status: 302,

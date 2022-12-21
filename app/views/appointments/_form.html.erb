@@ -16,9 +16,11 @@
   <% end %>
   <div class="form-group">
     <%= form.label :start %>
-    <%= form.datetime_field :start_date, class: 'form-control', min: Time.now, step: "any" %>
+    <%= form.datetime_field :start_date, value: appointment&.timerange&.first&.strftime("%Y-%m-%dT%T"),
+                            min: appointment&.timerange&.first&.strftime("%Y-%m-%dT%T") || Time.now.strftime("%Y-%m-%dT%T"), step: "any", class: 'form-control' %>
     <%= form.label :end %>
-    <%= form.datetime_field :end_date, class: 'form-control', min: Time.now, step: "any" %>
+    <%= form.datetime_field :end_date, value: appointment&.timerange&.last&.strftime("%Y-%m-%dT%T"),
+                                       min: appointment&.timerange&.last&.strftime("%Y-%m-%dT%T") || Time.now.strftime("%Y-%m-%dT%T"), step: "any", class: 'form-control' %>
   </div>
   <div class="form-group">
     <%= form.label :doctor %>

@@ -60,7 +60,7 @@ CREATE TABLE public.appointments (
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
     CONSTRAINT check_if_dr_and_patient_are_different CHECK ((doctor_id <> patient_id)),
-    CONSTRAINT check_if_times_are_different CHECK (lower_inc(timerange))
+    CONSTRAINT check_if_empty CHECK ((NOT isempty(timerange)))
 );
 
 
@@ -286,7 +286,7 @@ ALTER TABLE ONLY public.schema_migrations
 --
 
 ALTER TABLE ONLY public.appointments
-    ADD CONSTRAINT timerange_exclude_no_overlap_doctor_id EXCLUDE USING gist (timerange WITH &&, doctor_id WITH =);
+    ADD CONSTRAINT timerange_exclude_no_overlap_doctor_id EXCLUDE USING gist (timerange WITH &&, doctor_id WITH =) WHERE ((status = 'ok'::public.enum_status_appointment));
 
 
 --
@@ -294,7 +294,7 @@ ALTER TABLE ONLY public.appointments
 --
 
 ALTER TABLE ONLY public.appointments
-    ADD CONSTRAINT timerange_exclude_no_overlap_patient_id EXCLUDE USING gist (timerange WITH &&, patient_id WITH =);
+    ADD CONSTRAINT timerange_exclude_no_overlap_patient_id EXCLUDE USING gist (timerange WITH &&, patient_id WITH =) WHERE ((status = 'ok'::public.enum_status_appointment));
 
 
 --

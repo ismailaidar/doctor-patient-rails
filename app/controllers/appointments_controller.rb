@@ -10,15 +10,11 @@ class AppointmentsController < ApplicationController
 
   def new
     @appointment = Appointment.new
-    @appointment.start_date = Time.now
-    @appointment.end_date = Time.now
     @doctors = Doctor.active_doctors
   end
 
   def edit
     @doctors = Doctor.active_doctors([@appointment.patient.doctor_id])
-    @appointment.start_date = @appointment.timerange.first
-    @appointment.end_date = @appointment.timerange.last
   end
 
   def create
@@ -26,8 +22,6 @@ class AppointmentsController < ApplicationController
     if @appointment.commit
       redirect_to @appointment, notice: 'Appointment was successfully created.'
     else
-      @appointment.start_date = @appointment.timerange&.first
-      @appointment.end_date = @appointment.timerange&.last
       @doctors = Doctor.active_doctors
       render :new, status: :unprocessable_entity
     end
@@ -39,8 +33,6 @@ class AppointmentsController < ApplicationController
       redirect_to @appointment, notice: 'Appointment was successfully updated.'
     else
       @doctors = Doctor.active_doctors([[@appointment.patient&.doctor_id]])
-      @appointment.start_date = @appointment.timerange&.first
-      @appointment.end_date = @appointment.timerange&.last
       render :edit, status: :unprocessable_entity
     end
   end
@@ -67,8 +59,10 @@ class AppointmentsController < ApplicationController
   def appointment_params
     start_date = params[:appointment][:start_date]&.to_datetime
     end_date = params[:appointment][:end_date]&.to_datetime
-    timerange = start_date...end_date if start_date && end_date
-    params.require(:appointment).permit(:patient_id, :doctor_id, :timerange, :start_date,
-                                        :end_date).merge(timerange:)
+    if start_date && end_date && (start_date.strftime('%Y-%m-%dT %H:%M') != end_date.strftime('%Y-%m-%dT %H:%M'))
+      timerange = start_date...end_date
+    end
+    params.require(:appointment).slice(:patient_id, :doctor_id,
+                                       :timerange).merge(timerange:).permit!
   end
 end
