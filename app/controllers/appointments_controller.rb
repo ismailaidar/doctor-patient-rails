@@ -59,9 +59,7 @@ class AppointmentsController < ApplicationController
   def appointment_params
     start_date = params[:appointment][:start_date]&.to_datetime
     end_date = params[:appointment][:end_date]&.to_datetime
-    if start_date && end_date && (start_date.strftime('%Y-%m-%dT %H:%M') != end_date.strftime('%Y-%m-%dT %H:%M'))
-      timerange = start_date...end_date
-    end
+    timerange = start_date...end_date if start_date && end_date
     params.require(:appointment).slice(:patient_id, :doctor_id,
                                        :timerange).merge(timerange:).permit!
   end
