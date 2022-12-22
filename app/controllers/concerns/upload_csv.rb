@@ -44,18 +44,15 @@ module UploadCsv
         ON CONFLICT DO NOTHING;
 
         insert into doctors (npi, person_id, created_at, updated_at)
-        select distinct COALESCE(LOWER(national_provider_identifier), floor(random() * 10000000000)::bigint::text), id, NOW(), NOW()
+        select distinct COALESCE(lpad(national_provider_identifier, 10, '0'), floor(random() * 10000000000)::text), id, NOW(), NOW()
         from _csv_appointment csv
         inner join people p on p.first_name = csv.doctor_first_name and p.last_name = csv.doctor_last_name
         left outer join doctors d
           on p.id = d.person_id
           and p.first_name = csv.doctor_first_name
           and p.last_name = csv.doctor_last_name
-          and
-            case
-            when LENGTH(csv.national_provider_identifier) < 10 then csv.national_provider_identifier || repeat('0', 10 - LENGTH(csv.national_provider_identifier))
-            end = d.npi
-            ON CONFLICT DO NOTHING;
+          and lpad(national_provider_identifier, 10, '0') = d.npi
+          ON CONFLICT DO NOTHING;
 
 
         insert into appointments (patient_id, doctor_id, timerange, created_at, updated_at)
@@ -67,7 +64,6 @@ module UploadCsv
           p.upi = LOWER(csv.universal_patient_identifier)
         left join doctors d on
         d.npi = csv.national_provider_identifier
-        --where to_timestamp(end_time, 'YYYY-MM-DD HH24:MI:SS') >= to_timestamp(start_time, 'YYYY-MM-DD HH24:MI:SS')
         where p.person_id <> d.person_id
         ON CONFLICT DO NOTHING;
       SQL
