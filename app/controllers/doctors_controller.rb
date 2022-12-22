@@ -4,7 +4,10 @@ class DoctorsController < ApplicationController
   before_action :set_statuses, only: %i[edit update]
 
   def index
-    @doctors = Doctor.includes(:person).order(person_id: :DESC)
+    @doctors = Doctor
+      .includes(:person)
+      .order(person_id: :DESC)
+      .paginate(page: params[:page], per_page: 10)
   end
 
   def show; end

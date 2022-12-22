@@ -3,7 +3,10 @@ class PatientsController < ApplicationController
   before_action :set_unassigned_people, only: %i[new create edit update]
 
   def index
-    @patients = Patient.includes(:person, doctor: :person).order(person_id: :DESC)
+    @patients = Patient
+                .includes(:person, doctor: :person)
+                .order(person_id: :DESC)
+                .paginate(page: params[:page], per_page: 10)
   end
 
   def show; end

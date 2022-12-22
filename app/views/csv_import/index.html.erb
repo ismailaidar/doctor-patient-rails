@@ -1,0 +1,12 @@
+<h2>Import CSV file:</h2>
+<div>
+  <p>total People: <b><%= Person.count %></b></p>
+  <p>total Doctors: <b><%= Doctor.count %></b></p>
+  <p>total Patients: <b><%= Patient.count %></b></p>
+  <p>total Appointments: <b><%= Appointment.count %></b></p>
+</div>
+<%= form_with url: csv_import_upload_path, method: :post, multipart: true do |form| %>
+  <%= form.label :file, "Upload file:" %>
+  <%= form.file_field :file, accept: 'text/csv' , class: 'form-control mb-3', required: true %>
+  <%= form.submit "Upload", class: 'btn btn-primary' %>
+<% end %>

@@ -5,6 +5,7 @@ class Appointment < ApplicationRecord
   enum :status, {
     ok: 'ok', error: 'error'
   }, default: 'ok'
+
   validates :timerange, presence: true
   validate :end_date_cannot_be_less_than_start_date
   validate :start_date_cannot_equal_end_date

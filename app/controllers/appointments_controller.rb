@@ -3,7 +3,10 @@ class AppointmentsController < ApplicationController
   before_action :set_patients, only: %i[new create edit update]
 
   def index
-    @appointments = Appointment.includes(patient: :person, doctor: :person).order(id: :DESC)
+    @appointments = Appointment
+                    .includes(patient: :person, doctor: :person)
+                    .order(id: :DESC)
+                    .paginate(page: params[:page], per_page: 10)
   end
 
   def show; end

@@ -5,6 +5,7 @@ class CreatePeople < ActiveRecord::Migration[7.0]
       t.string :last_name, null: false
       t.check_constraint "first_name ~ '\\S'"
       t.check_constraint "last_name ~ '\\S'"
+      t.index %i[first_name last_name], unique: true
       t.timestamps
     end
   end

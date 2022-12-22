@@ -26,5 +26,8 @@
       <% end %>
     </tbody>
   </table>
+  <div class="d-flex justify-content-center digg_pagination">
+    <%= will_paginate @posts %>
+  </div>
 </div>
 <%= link_to "New doctor", new_doctor_path, class: 'btn btn-primary' %>

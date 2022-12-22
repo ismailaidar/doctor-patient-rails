@@ -347,6 +347,13 @@ CREATE INDEX index_patients_on_person_id ON public.patients USING btree (person_
 
 
 --
+-- Name: index_people_on_first_name_and_last_name; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_people_on_first_name_and_last_name ON public.people USING btree (first_name, last_name);
+
+
+--
 -- Name: doctors fk_rails_1046c05cde; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
