@@ -59,7 +59,7 @@ CREATE TABLE public.appointments (
     timerange tstzrange NOT NULL,
     created_at timestamp(6) without time zone NOT NULL,
     updated_at timestamp(6) without time zone NOT NULL,
-    CONSTRAINT check_if_dr_and_patient_are_different CHECK ((doctor_id <> patient_id)),
+    CONSTRAINT check_if_dr_and_patient_are_different CHECK (((doctor_id <> patient_id) OR (status <> 'ok'::public.enum_status_appointment))),
     CONSTRAINT check_if_empty CHECK ((NOT isempty(timerange)))
 );
 
@@ -351,6 +351,13 @@ CREATE INDEX index_patients_on_person_id ON public.patients USING btree (person_
 --
 
 CREATE UNIQUE INDEX index_people_on_first_name_and_last_name ON public.people USING btree (first_name, last_name);
+
+
+--
+-- Name: unique_all_cols; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX unique_all_cols ON public.appointments USING btree (doctor_id, patient_id, timerange);
 
 
 --
