@@ -4,6 +4,7 @@
   <p>total Doctors: <b><%= Doctor.count %></b></p>
   <p>total Patients: <b><%= Patient.count %></b></p>
   <p>total Appointments: <b><%= Appointment.count %></b></p>
+  <p>invalid appointments: <b><%= Appointment.error.count %></b></p>
 </div>
 <%= form_with url: csv_import_upload_path, method: :post, multipart: true do |form| %>
   <%= form.label :file, "Upload file:" %>

@@ -55,36 +55,45 @@ module UploadCsv
           ON CONFLICT DO NOTHING;
 
 
-          insert into appointments (patient_id, doctor_id, timerange, created_at, updated_at, status)
-          SELECT
-            p.person_id,
-            d.person_id,
-            CASE
-              WHEN to_timestamp(start_time, 'YYYY-MM-DD HH24:MI:SS') < to_timestamp(end_time, 'YYYY-MM-DD HH24:MI:SS')
-                THEN tstzrange(to_timestamp(start_time, 'YYYY-MM-DD HH24:MI:SS'), to_timestamp(end_time, 'YYYY-MM-DD HH24:MI:SS'))
-              ELSE tstzrange(to_timestamp(end_time, 'YYYY-MM-DD HH24:MI:SS'), to_timestamp(start_time, 'YYYY-MM-DD HH24:MI:SS'))
-            END as timerange,
-            NOW() as created_at,
-            NOW() as updated_at,
-            CASE
-            WHEN (
-              SELECT true FROM appointments apt
-              WHERE apt.doctor_id = d.person_id AND tstzrange(to_timestamp(start_time, 'YYYY-MM-DD HH24:MI:SS'), to_timestamp(end_time, 'YYYY-MM-DD HH24:MI:SS')) && apt.timerange
-              limit 1
-            ) OR (
-                SELECT true FROM appointments apt
-                WHERE apt.patient_id = p.person_id AND tstzrange(to_timestamp(start_time, 'YYYY-MM-DD HH24:MI:SS'), to_timestamp(end_time, 'YYYY-MM-DD HH24:MI:SS')) && apt.timerange
-                limit 1
-            )
-            OR d.person_id = p.person_id
-            OR to_timestamp(start_time, 'YYYY-MM-DD HH24:MI:SS') >= to_timestamp(end_time, 'YYYY-MM-DD HH24:MI:SS')
-            THEN 'error'::enum_status_appointment ELSE 'ok'::enum_status_appointment END as status
-            from _csv_appointment csv
-            left join patients p on
-              p.upi = LOWER(csv.universal_patient_identifier)
-            left join doctors d on
-              d.npi = lpad(csv.national_provider_identifier, 10, '0')
-          ;
+          insert into appointments(patient_id, doctor_id, timerange, created_at, updated_at, status)
+          select
+          p.person_id as patient_id ,
+          d.person_id as doctor_id ,
+          tstzrange(start_time::timestamptz, end_time::timestamptz) as timerange,
+          NOW() as created_at,
+          NOW() as updated_at,
+          CASE
+            WHEN d.person_id = p.person_id THEN 'error'::enum_status_appointment
+            ELSE 'ok'::enum_status_appointment
+          END as status
+          from _csv_appointment csv
+          left join patients p on
+            p.upi = LOWER(csv.universal_patient_identifier)
+          left join doctors d on
+            d.npi = lpad(csv.national_provider_identifier, 10, '0')
+          ON CONFLICT do nothing ;
+
+          insert into appointments(patient_id, doctor_id, timerange, created_at, updated_at, status)
+          select
+          p.person_id as patient_id ,
+          d.person_id as doctor_id ,
+          tstzrange(start_time::timestamptz, end_time::timestamptz) as timerange,
+          NOW() as created_at,
+          NOW() as updated_at,
+          CASE
+            WHEN d.person_id = p.person_id THEN 'error'::enum_status_appointment
+            when inner_apt.timerange && timerange and inner_apt.patient_id = p.person_id  THEN 'error'::enum_status_appointment
+            when inner_apt.timerange && timerange and inner_apt.doctor_id = d.person_id  THEN 'error'::enum_status_appointment
+            ELSE 'ok'::enum_status_appointment
+          END as status
+          from _csv_appointment csv
+          left join patients p on
+            p.upi = LOWER(csv.universal_patient_identifier)
+          left join doctors d on
+            d.npi = lpad(csv.national_provider_identifier, 10, '0')
+          left join appointments inner_apt
+          on inner_apt.patient_id = p.person_id and inner_apt.doctor_id = d.person_id
+          ON CONFLICT do nothing;
       SQL
 
       conn.execute('commit;')
