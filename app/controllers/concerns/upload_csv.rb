@@ -1,102 +1,104 @@
 module UploadCsv
-  def self.import(file_path)
+  def self.import(csv_string)
     report = 0
     conn = ApplicationRecord.connection
 
-    conn.execute('begin;')
-
-    conn.execute <<~SQL
-      create temporary table _csv_appointment (
-        doctor_last_name text,
-        doctor_first_name text,
-        national_provider_identifier text,
-        patient_last_name text,
-        patient_first_name text,
-        universal_patient_identifier text,
-        start_time text,
-        end_time text
-      ) on commit drop;
-    SQL
-
-    conn.raw_connection.copy_data("copy _csv_appointment from stdin with (format csv, delimiter ',', header true)") do
-      conn.raw_connection.put_copy_data(File.read(file_path))
-    end
-
     ApplicationRecord.transaction do
+      conn.execute <<~SQL
+        create temporary table _csv_appointment (
+          doctor_last_name text not null,
+          doctor_first_name text not null,
+          national_provider_identifier text not null,
+          patient_last_name text not null,
+          patient_first_name text not null,
+          universal_patient_identifier text not null,
+          start_time text not null,
+          end_time text not null
+        ) on commit drop;
+      SQL
+
+      conn.raw_connection.copy_data('copy _csv_appointment from stdin with (format csv, header true)') do
+        conn.raw_connection.put_copy_data(csv_string)
+      end
+
       report = conn.execute <<~SQL
         insert into people (first_name, last_name, created_at, updated_at)
-        select distinct coalesce(doctor_first_name, 'UNKNOWN') as first_name,
-                coalesce(doctor_last_name, 'UNKNOWN') as last_name, NOW(), NOW()
+        select doctor_first_name as first_name,
+               doctor_last_name as last_name, NOW(), NOW()
         from _csv_appointment
         union
-        select distinct coalesce(patient_first_name, 'UNKNOWN') as first_name,
-                coalesce(patient_last_name, 'UNKNOWN') as last_name, NOW(), NOW()
+        select patient_first_name as first_name,
+               patient_last_name as last_name, NOW(), NOW()
         from _csv_appointment
         ON CONFLICT DO NOTHING;
 
         insert into patients (upi, person_id, created_at, updated_at)
-        select distinct COALESCE(LOWER(universal_patient_identifier), left(md5(random()::text), 9) || right(md5(random()::text), 9)), id, NOW(), NOW()
+        select distinct LOWER(universal_patient_identifier), id, NOW(), NOW()
         from _csv_appointment csv
         inner join people p on p.first_name = csv.patient_first_name and p.last_name = csv.patient_last_name
-        left outer join patients pt
-          on p.id = pt.person_id
-          and pt.upi = csv.universal_patient_identifier
         ON CONFLICT DO NOTHING;
 
         insert into doctors (npi, person_id, created_at, updated_at)
-        select distinct COALESCE(lpad(national_provider_identifier, 10, '0'), floor(random() * 10000000000)::text), id, NOW(), NOW()
+        select distinct national_provider_identifier, id, NOW(), NOW()
         from _csv_appointment csv
         inner join people p on p.first_name = csv.doctor_first_name and p.last_name = csv.doctor_last_name
-        left outer join doctors d
-          on p.id = d.person_id
-          and p.first_name = csv.doctor_first_name
-          and p.last_name = csv.doctor_last_name
-          and lpad(national_provider_identifier, 10, '0') = d.npi
-          ON CONFLICT DO NOTHING;
+        ON CONFLICT DO NOTHING;
 
+        alter table _csv_appointment add column timerange tstzrange;
+        create index on _csv_appointment (timerange);
+        update _csv_appointment set timerange = tstzrange(start_time::timestamptz, end_time::timestamptz);
 
-          insert into appointments(patient_id, doctor_id, timerange, created_at, updated_at, status)
+        with _new_appointments (patient_id, doctor_id, status, timerange) as (
           select
-          p.person_id as patient_id ,
-          d.person_id as doctor_id ,
-          tstzrange(start_time::timestamptz, end_time::timestamptz) as timerange,
-          NOW() as created_at,
-          NOW() as updated_at,
-          CASE
-            WHEN d.person_id = p.person_id THEN 'error'::enum_status_appointment
-            ELSE 'ok'::enum_status_appointment
-          END as status
+            patients.person_id,
+            doctors.person_id,
+            case
+              when patients.person_id = doctors.person_id
+                or timerange && range_agg(timerange) OVER doctor_appointments
+                or timerange && range_agg(timerange) OVER patient_appointments
+              then 'error'
+              else 'ok'
+            end::enum_status_appointment,
+            csv.timerange
           from _csv_appointment csv
-          left join patients p on
-            p.upi = LOWER(csv.universal_patient_identifier)
-          left join doctors d on
-            d.npi = lpad(csv.national_provider_identifier, 10, '0')
-          ON CONFLICT do nothing ;
-
-          insert into appointments(patient_id, doctor_id, timerange, created_at, updated_at, status)
-          select
-          p.person_id as patient_id ,
-          d.person_id as doctor_id ,
-          tstzrange(start_time::timestamptz, end_time::timestamptz) as timerange,
-          NOW() as created_at,
-          NOW() as updated_at,
-          CASE
-            WHEN d.person_id = p.person_id THEN 'error'::enum_status_appointment
-            when inner_apt.timerange && timerange and inner_apt.patient_id = p.person_id  THEN 'error'::enum_status_appointment
-            when inner_apt.timerange && timerange and inner_apt.doctor_id = d.person_id  THEN 'error'::enum_status_appointment
-            ELSE 'ok'::enum_status_appointment
-          END as status
-          from _csv_appointment csv
-          left join patients p on
-            p.upi = LOWER(csv.universal_patient_identifier)
-          left join doctors d on
-            d.npi = lpad(csv.national_provider_identifier, 10, '0')
-          left join appointments inner_apt
-          on inner_apt.patient_id = p.person_id and inner_apt.doctor_id = d.person_id
-          ON CONFLICT do nothing;
+          inner join patients on lower(csv.universal_patient_identifier) = patients.upi
+          inner join doctors on csv.national_provider_identifier = doctors.npi
+          window doctor_appointments as (
+            partition by national_provider_identifier
+            order by timerange
+            range between unbounded preceding and unbounded following exclude current row
+          ), patient_appointments as (
+            partition by universal_patient_identifier
+            order by timerange
+            range between unbounded preceding and unbounded following exclude current row
+          )
+        )
+        insert into appointments (patient_id, doctor_id, status, timerange, created_at, updated_at)
+        select
+          csv.patient_id,
+          csv.doctor_id,
+          case
+            when csv.status = 'error'
+              or count(p.id) > 0
+              or count(d.id) > 0
+            then 'error'
+            else 'ok'
+          end::enum_status_appointment,
+          csv.timerange,
+          now(), now()
+        from _new_appointments csv
+        left outer join appointments p
+          on csv.patient_id = p.patient_id
+         and csv.timerange && p.timerange
+         and p.status = 'ok'
+        left outer join appointments d
+          on csv.doctor_id = d.doctor_id
+         and csv.timerange && d.timerange
+         and d.status = 'ok'
+        group by csv.patient_id, csv.doctor_id, csv.timerange, csv.status
+        on conflict do nothing
+        returning *
       SQL
-
-      conn.execute('commit;')
     end
     report
   end
