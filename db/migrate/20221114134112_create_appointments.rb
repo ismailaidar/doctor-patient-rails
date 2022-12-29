@@ -8,18 +8,20 @@ class CreateAppointments < ActiveRecord::Migration[7.0]
       t.tstzrange :timerange, null: false
       t.check_constraint "doctor_id <> patient_id OR status <> 'ok'", name: 'check_if_dr_and_patient_are_different'
       t.check_constraint 'NOT isempty(timerange)', name: 'check_if_empty'
-      t.index %i[doctor_id patient_id timerange], unique: true, name: 'unique_all_cols'
 
-      t.timestampsz
+      t.timestamps
     end
     execute <<-SQL
       CREATE EXTENSION btree_gist;
 
       ALTER TABLE appointments
-      ADD CONSTRAINT timerange_exclude_no_overlap_doctor_id
+      ADD CONSTRAINT index_appointments_timerange_exclude_no_overlap_doctor_id
       EXCLUDE USING GIST (timerange WITH &&, doctor_id with =) WHERE (status = 'ok'),
-      ADD CONSTRAINT timerange_exclude_no_overlap_patient_id
+      ADD CONSTRAINT index_appointments_timerange_exclude_no_overlap_patient_id
       EXCLUDE USING GIST (timerange WITH &&, patient_id with =) WHERE (status = 'ok');
+
+      CREATE UNIQUE INDEX index_unique_patient_doctor_timerange
+      ON appointments (patient_id, doctor_id, timerange);
     SQL
   end
 

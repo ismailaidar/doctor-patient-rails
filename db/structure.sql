@@ -258,6 +258,22 @@ ALTER TABLE ONLY public.doctors
 
 
 --
+-- Name: appointments index_appointments_timerange_exclude_no_overlap_doctor_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.appointments
+    ADD CONSTRAINT index_appointments_timerange_exclude_no_overlap_doctor_id EXCLUDE USING gist (timerange WITH &&, doctor_id WITH =) WHERE ((status = 'ok'::public.enum_status_appointment));
+
+
+--
+-- Name: appointments index_appointments_timerange_exclude_no_overlap_patient_id; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.appointments
+    ADD CONSTRAINT index_appointments_timerange_exclude_no_overlap_patient_id EXCLUDE USING gist (timerange WITH &&, patient_id WITH =) WHERE ((status = 'ok'::public.enum_status_appointment));
+
+
+--
 -- Name: patients patients_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -279,22 +295,6 @@ ALTER TABLE ONLY public.people
 
 ALTER TABLE ONLY public.schema_migrations
     ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
-
-
---
--- Name: appointments timerange_exclude_no_overlap_doctor_id; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.appointments
-    ADD CONSTRAINT timerange_exclude_no_overlap_doctor_id EXCLUDE USING gist (timerange WITH &&, doctor_id WITH =) WHERE ((status = 'ok'::public.enum_status_appointment));
-
-
---
--- Name: appointments timerange_exclude_no_overlap_patient_id; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.appointments
-    ADD CONSTRAINT timerange_exclude_no_overlap_patient_id EXCLUDE USING gist (timerange WITH &&, patient_id WITH =) WHERE ((status = 'ok'::public.enum_status_appointment));
 
 
 --
@@ -354,10 +354,10 @@ CREATE UNIQUE INDEX index_people_on_first_name_and_last_name ON public.people US
 
 
 --
--- Name: unique_all_cols; Type: INDEX; Schema: public; Owner: -
+-- Name: index_unique_patient_doctor_timerange; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX unique_all_cols ON public.appointments USING btree (doctor_id, patient_id, timerange);
+CREATE UNIQUE INDEX index_unique_patient_doctor_timerange ON public.appointments USING btree (patient_id, doctor_id, timerange);
 
 
 --
