@@ -1,6 +1,6 @@
 module UploadCsv
   def self.import(csv_string)
-    report = 0
+    report = {}
     conn = ApplicationRecord.connection
 
     ApplicationRecord.transaction do
@@ -21,7 +21,7 @@ module UploadCsv
         conn.raw_connection.put_copy_data(csv_string)
       end
 
-      report = conn.execute <<~SQL
+      report[:people] = conn.execute <<~SQL
         insert into people (first_name, last_name, created_at, updated_at)
         select doctor_first_name as first_name,
                doctor_last_name as last_name, NOW(), NOW()
@@ -31,19 +31,25 @@ module UploadCsv
                patient_last_name as last_name, NOW(), NOW()
         from _csv_appointment
         ON CONFLICT DO NOTHING;
+      SQL
 
+      report[:patients] = conn.execute <<~SQL
         insert into patients (upi, person_id, created_at, updated_at)
         select distinct LOWER(universal_patient_identifier), id, NOW(), NOW()
         from _csv_appointment csv
         inner join people p on p.first_name = csv.patient_first_name and p.last_name = csv.patient_last_name
         ON CONFLICT DO NOTHING;
+      SQL
 
+      report[:doctors] = conn.execute <<~SQL
         insert into doctors (npi, person_id, created_at, updated_at)
         select distinct national_provider_identifier, id, NOW(), NOW()
         from _csv_appointment csv
         inner join people p on p.first_name = csv.doctor_first_name and p.last_name = csv.doctor_last_name
         ON CONFLICT DO NOTHING;
+      SQL
 
+      report[:appointments] = conn.execute <<~SQL
         alter table _csv_appointment add column timerange tstzrange;
         create index on _csv_appointment (timerange);
         update _csv_appointment set timerange = tstzrange(start_time::timestamptz, end_time::timestamptz);

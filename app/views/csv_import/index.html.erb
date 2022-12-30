@@ -11,3 +11,39 @@
   <%= form.file_field :file, accept: 'text/csv' , class: 'form-control mb-3', required: true %>
   <%= form.submit "Upload", class: 'btn btn-primary' %>
 <% end %>
+<% if @invalid_appointments.present? %>
+  <div class="container-fuild mt-4">
+    <h1>Invalid appointments</h1>
+    <div id="appointments">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>DOCTOR</th>
+            <th>PATIENT</th>
+            <th>STATUS</th>
+            <th>START TIME</th>
+            <th>END TIME</th>
+            <th>SHOW</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @invalid_appointments.each do |appointment| %>
+            <tr>
+              <td><%= link_to appointment.doctor.person.full_name, appointment.doctor, class: 'link-primary' %></td>
+              <td><%= link_to appointment.patient.person.full_name, appointment.patient, class: 'link-primary' %></td>
+              <td class='text-danger'>ERROR</td>
+              <td><%= appointment.timerange.first.to_formatted_s(:long) %></td>
+              <td><%= appointment.timerange.last.to_formatted_s(:long) %></td>
+              <td>
+                <%= link_to 'Show', appointment, class: 'dropdown-item', class: 'btn btn-primary' %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+      <div class="d-flex justify-content-center digg_pagination">
+        <%= will_paginate @invalid_appointments %>
+      </div>
+    </div>
+  </div>
+<% end %>
