@@ -12,8 +12,8 @@ module UploadCsv
           patient_last_name text not null,
           patient_first_name text not null,
           universal_patient_identifier text not null,
-          start_time text not null,
-          end_time text not null
+          start_time timestamptz not null,
+          end_time timestamptz not null
         ) on commit drop;
       SQL
 
@@ -23,12 +23,12 @@ module UploadCsv
 
       report[:people] = conn.execute <<~SQL
         insert into people (first_name, last_name, created_at, updated_at)
-        select doctor_first_name as first_name,
-               doctor_last_name as last_name, NOW(), NOW()
+        select doctor_first_name,
+               doctor_last_name, NOW(), NOW()
         from _csv_appointment
         union
-        select patient_first_name as first_name,
-               patient_last_name as last_name, NOW(), NOW()
+        select patient_first_name,
+               patient_last_name, NOW(), NOW()
         from _csv_appointment
         ON CONFLICT DO NOTHING;
       SQL
@@ -52,7 +52,7 @@ module UploadCsv
       report[:appointments] = conn.execute <<~SQL
         alter table _csv_appointment add column timerange tstzrange;
         create index on _csv_appointment (timerange);
-        update _csv_appointment set timerange = tstzrange(start_time::timestamptz, end_time::timestamptz);
+        update _csv_appointment set timerange = tstzrange(start_time, end_time);
 
         with _new_appointments (patient_id, doctor_id, status, timerange) as (
           select
